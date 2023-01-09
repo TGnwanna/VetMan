@@ -1,0 +1,243 @@
+﻿@using static Core.Enums.VetManEnums
+@model IEnumerable<Core.ViewModels.CustomerBookingReadDto>
+@{
+	Layout = ViewBag.Layout;
+	var canAccess = Utitily.GetRoleScreen();
+	var roleAccess = Utitily.GetCurrentUser();
+}
+<style>
+	.text_large {
+		font-size: 100%;
+	}
+</style>
+
+
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Booking History</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active">Bookings</li>
+					</ul>
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a asp-controller="Booking" asp-action="BookProduct" class="btn add-btn"><i class="fa fa-plus"></i> Add Booking</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+		
+
+
+
+		<div class="row">
+			<div class="col-md-12">
+				
+					<div class="table-responsive">
+						<table class="table table-striped custom-table datatable">
+							<thead>
+								<tr>
+								     <th> S/N </th>
+									<th>Client Name</th>
+									<th>Phone</th>
+									<th>Product Group</th>
+									<th>Booked Date</th>
+									<th>Amount Paid</th>
+									<th>Balance </th>
+									<th>Total </th>
+									@if (roleAccess.Roles.Count() > 0)
+									{
+										var role = roleAccess.Roles.FirstOrDefault();
+										@if (role.Contains(Utitily.Constants.CompanyAdminRole) || role.Contains(Utitily.Constants.SuperAdminRole))
+										{
+											<th class="text-right">Action</th>
+										}
+										else{
+											@if (canAccess != null)
+											{
+												@if (canAccess.Count() > 0)
+												{
+													@if (canAccess.Any(c => c.ScreenId == (int)ScreenEnums.CancelBooking && c.ScreenChecked == true))
+													{
+														<th class="text-right">Action</th>
+													}
+												}
+											}
+										}
+									}
+								
+							</tr>
+						</thead>
+						@if (Model.Count() > 0 && Model != null)
+						{
+							<tbody>
+								@foreach (var item in Model)
+								{
+									<tr>
+										<td></td>
+										<td>
+											<h2 class="table-avatar">
+												@item.CustomerName 
+											</h2>
+										</td>
+										<td>@item.PhoneNumber</td>
+										<td>@item.BookingGroupName</td>
+										<td>@item.BookingDate.Value.ToString("d")</td>
+										<td><span class="badge bg-inverse-success text_large">&#x20A6;@item.TotalPaid</span></td>
+										<td><span class="badge bg-inverse-danger text_large">&#x20A6;@item.Balance</span></td>
+										<td><span class="badge bg-inverse-primary text_large">&#x20A6;@item.TotalAmount</span></td>
+										@if (roleAccess.Roles.Count() > 0)
+										{
+											var role = roleAccess.Roles.FirstOrDefault();
+											@if (role.Contains(Utitily.Constants.CompanyAdminRole) || role.Contains(Utitily.Constants.SuperAdminRole))
+											{
+												<td class="text-right">
+													<div class="dropdown dropdown-action">
+														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+														<div class="dropdown-menu dropdown-menu-right">
+															<a class="dropdown-item" data-toggle="modal" data-target="#edit_salary" onclick="getCustomerBookingToEdit('@item.Id')"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+															<a class="dropdown-item" onclick="getCustomerBookingToDelete('@item.Id')" data-toggle="modal" data-target="#delete_salary"><i class="fa fa-trash-o m-r-5"></i> Cancel</a>
+														</div>
+													</div>
+												</td>
+											}
+											else 
+											{
+												@if (canAccess != null)
+												{
+													@if (canAccess.Count() > 0)
+													{
+														@if (canAccess.Any(c => c.ScreenId == (int)ScreenEnums.CancelBooking && c.ScreenChecked == true))
+														{
+															<td class="text-right">
+																<div class="dropdown dropdown-action">
+																	<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+																	<div class="dropdown-menu dropdown-menu-right">
+																		<a class="dropdown-item" data-toggle="modal" data-target="#edit_salary" onclick="getCustomerBookingToEdit('@item.Id')"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+																		<a class="dropdown-item" onclick="getCustomerBookingToDelete('@item.Id')" data-toggle="modal" data-target="#delete_salary"><i class="fa fa-trash-o m-r-5"></i> Cancel</a>
+																	</div>
+																</div>
+															</td>
+														}
+													}
+												}
+
+											}
+										}
+
+									</tr>
+								}
+							</tbody>
+						}
+					</table>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- /Page Content -->
+	<!-- Edit Salary Modal -->
+	<div id="edit_salary" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Client Booking</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Client Name</label>
+								<input class="form-control" type="text" id="editName" readonly>
+							</div>
+						</div>
+						<input type="text" hidden id="editId"/>
+						<input type="text" hidden id="editCustomerId"/>
+						<input type="text" hidden id="editBookingGroupId"/>
+						<div class="col-sm-6">
+							<label>Product Group</label>
+							<input class="form-control" type="text" id="editproductGroup" readonly>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<h4 class="text-primary">Basic</h4>
+							
+							<div class="form-group">
+								<label>Booked Quantity</label>
+								<input class="form-control" type="text" id="editQuantity">
+							</div>
+							
+							
+						</div>
+
+						<div class="col-sm-6">
+							<h4 class="text-primary">Expenses</h4>
+							<div class="form-group">
+								<label>Amount Paid</label>
+								<input class="form-control" type="text" id="editAmount" readonly>
+							</div>
+						</div>
+							
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="SaveEdit()">Save</button>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Edit Salary Modal -->
+	<!-- Delete Salary Modal -->
+	<div class="modal custom-modal fade" id="delete_salary" role="dialog">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="form-header">
+						<h3>Cancel Customer Booking</h3>
+						<p>Are you sure, you want to Cancel this customer booking?</p>
+					</div>
+					<div class="modal-btn delete-action">
+						<div class="row">
+							<div class="col-6">
+								<input type="text" hidden id="DeleteCustomerBookId" />
+								<a onclick="CustomerBookingToDelete()" class="btn btn-primary continue-btn">Cancel</a>
+							</div>
+							<div class="col-6">
+								<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Back</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Delete Salary Modal -->
+
+</div>
+<!-- /Page Wrapper -->

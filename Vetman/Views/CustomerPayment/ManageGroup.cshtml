@@ -1,0 +1,483 @@
+﻿@model Core.ViewModels.CustomerPaymentGeneralViewModel
+@{
+	ViewData["Title"] = "Manage Group";
+	Layout =  ViewBag.Layout;
+	var utility = new Utitily();
+	var vaccineSubscription = utility.vaccineSubscription();
+}
+
+
+
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+			
+	<!-- Page Content -->
+	<div class="content container-fluid">
+				
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Manage @Model.GroupName Group</h3>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->		
+		<!-- Search Filter -->
+		<div class="row filter-row">
+			<div class="col-sm-6 col-md-2 pt-2">
+				<a class="btn btn-danger btn-block" asp-controller="CustomerPayment" asp-action="GroupSummary" asp-route-id="@Model.GroupId"> Summary</a>
+			</div>
+			<div class="col-sm-6 col-md-3 pt-2">
+				<a class="btn btn-secondary btn-block" data-toggle="modal" data-target="#add_expected_date" data-backdrop="static" data-keyboard="false" onclick="updateExpectedDate('@Model.GroupId')"> Update Expected Date</a>
+			</div>
+			<div class="col-sm-6 col-md-2 pt-2">
+				<a class="btn btn-primary btn-block" asp-route-id="@Model.GroupId" asp-action="AddCustomer" asp-controller="Booking"> Add Customer</a>
+			</div>
+			<div class="col-sm-6 col-md-2 pt-2">
+				<a class="btn btn-success btn-block" data-toggle="modal" data-target="#add_employee" onclick="getExistingPrice('@Model.GroupId')"> Update Price </a>
+			</div>
+			<div class="col-sm-6 col-md-2 pt-2">
+				<a class="btn btn-secondary btn-block" data-toggle="modal" data-target="#employee" data-backdrop="static" data-keyboard="false" onclick="getArrivalReceipt('@Model.GroupId')"> Arrival Receipt </a>
+			</div>
+		</div>
+		@Html.HiddenFor(x => x.CustomerCount,new {Id ="customerCount"})
+		@Html.HiddenFor(x => x.GroupId, new {Id ="groupId"})
+		@Html.HiddenFor(x => x.SmsCost, new {Id ="smsCost"})
+		<!-- /Search Filter -->
+		<div class="row">
+			
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table mb-0 datatable">
+						<thead>
+							<tr>
+								<th>S/N</th>
+								<th>Customer Name</th>
+								<th>Phone Number</th>
+								<th>Qty Booked</th>
+								<th>Total Paid</th>
+								<th>Balance</th>
+								<th>Booking Date</th>
+								<th>Payments</th>
+								<th class="text-center">Action</th>
+							</tr>
+						</thead>
+						@if(Model.CustomerBookingViewModel != null && Model.CustomerBookingViewModel.Count() > 0)
+						{
+							<tbody>
+								@foreach (var customerPayment in Model.CustomerBookingViewModel)
+								{
+									<tr>
+										<td></td>
+										<td>
+											<h2 class="table-avatar">
+												@if (customerPayment.Status.ToLower().Contains("booked"))
+												{
+													<a href="profile.html">@customerPayment.CustomersFullName<span class="barge bg-inverse-primary">@customerPayment.Status</span></a>
+												}
+												else if (customerPayment.Status.ToLower().Contains("delivered"))
+												{
+													<a href="profile.html">@customerPayment.CustomersFullName<span class="barge bg-inverse-success">@customerPayment.Status</span></a>
+												}
+												else
+												{
+													<a href="profile.html">@customerPayment.CustomersFullName<span class="barge bg-inverse-danger">@customerPayment.Status</span></a>
+												}
+											</h2>
+										</td>
+										<td>@customerPayment.CustomersPhoneNumber</td>
+										<td>@customerPayment.QuantityBooked</td>
+										<td>@customerPayment.TotalPaid</td>
+										<td>@customerPayment.Balance</td>
+										<td>@customerPayment.BookingDate</td>
+										<td>
+											<a class="btn btn-sm btn-rounded" style="background-color:#ff9b44; color:white" asp-action="CustomerPayment" asp-route-customerBookingId="@customerPayment.Id" asp-controller="CustomerPayment">Payments</a>
+										</td>
+										<td class="text-center">
+											<a class="btn btn-sm btn-secondary btn-rounded" style="color:white" onclick="DeliveryBtn('@customerPayment.Id')">Deliver</a>
+											<a class="btn btn-sm btn-secondary btn-rounded"@* data-toggle="modal" data-target="#update-Group" *@style="color:white" onclick="moveToNewGrouperBooking('@customerPayment.Id')"><i class="fa fa-pencil"></i> </a>
+										</td>
+									</tr>
+								}
+							</tbody>
+						}
+					</table>
+						@if (Model.CustomerCount > 0)
+						{
+							<div class="col-sm-6 col-md-2 pt-2">
+								<a class="btn btn-secondary" data-toggle="modal" data-target="#update-Group-for-all-users"> Move Users </a>
+							</div>
+						}
+				</div>
+			</div>
+			
+			
+
+		</div>
+	</div>
+	<!-- /Page Content -->
+				
+	<!-- Update Price Modal -->
+	<div id="add_employee" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Update Price</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input class="form-control" hidden id="bookingGroupId" readonly type="text">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label class="col-form-label">Price<span class="text-danger">*</span></label>
+							<input class="form-control" id="existingPrice" readonly type="text">
+						</div>
+					</div>
+
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label class="col-form-label">New Price<span class="text-danger">*</span></label>
+							<input class="form-control" id="newPrice" type="text">
+						</div>
+					</div>
+					<div class="col-12 d-flex">
+						<div class="col-md-6">
+							<div class="form-group">
+								<h4>Send SMS</h4>
+								<div class="status-toggle">
+									<input type="checkbox" id="sendSMS" class="check">
+									<label for="sendSMS" class="checktoggle">checkbox</label>
+								</div>
+							</div>
+
+							<div class="d-flex justify-content-between mb-3">
+								<div id="infomationPrice">
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group">
+								<div class="status-toggle">
+									<h4>Send Email</h4>
+									<input type="checkbox" id="sendEmail" class="check">
+									<label for="sendEmail" class="checktoggle">checkbox</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="updatePrice()">Submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Update Price Modal -->
+	<!-- Arrival Receipt Modal -->
+	<div id="employee" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Arrival Receipt</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<input class="form-control" hidden id="myGroupId" type="text">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Mortality Recorded<span class="text-danger">*</span></label>
+								<input class="form-control" type="number" id="arrivalReceipt_MotalityRecorded">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Cost Price<span class="text-danger">*</span></label>
+								<input class="form-control" type="number" id="arrivalReceipt_ExpectedPrice">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Quantity Arrived<span class="text-danger">*</span></label>
+								<input class="form-control" type="number" id="arrivalReceipt_QuantityArrived">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<label>Supply Price<span class="text-danger">*</span></label>
+							<input class="form-control" type="number" id="arrivalReceipt_SupplyPrice">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<label>Supply Date<span class="text-danger">*</span></label>
+							<input class="form-control  floating datetimepicker" type="datetime" id="arrivalReceipt_SupplyDate">
+						</div>
+						
+					</div>
+
+					<div class="row"hidden>
+						<div class="col-sm-6">
+							<label>Quantity Left<span class="text-danger">*</span></label>
+							<input class="form-control" type="number" id="arrivalReceipt_QuantityLeft">
+						</div>
+					</div>
+
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="updateArrivalReceipt()">Update</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Arrival Receipt Modal -->
+	<!-- Update Expected Date Modal -->
+	<div id="add_expected_date" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Update Expected Date</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input class="form-control" hidden id="groupId" readonly type="text">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label class="col-form-label">Previous Date</label>
+							<input class="form-control" id="existingDate" readonly type="text">
+						</div>
+					</div>
+
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label class="col-form-label">New Date<span class="text-danger">*</span></label>
+							<input class="form-control" id="newDate"type="date">
+						</div>
+					</div>
+					<div class="col-12 d-flex">
+						<div class="col-md-6">
+							<div class="form-group">
+								<h4>Send SMS</h4>
+								<div class="status-toggle">
+									<input type="checkbox" id="sendSMSForDate" class="check">
+									<label for="sendSMSForDate" class="checktoggle">checkbox</label>
+								</div>
+							</div>
+							<div class="d-flex justify-content-between mb-3">
+								<div id="infomation">
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-md-6">
+							<div class="form-group">
+								<div class="status-toggle">
+									<h4>Send Email</h4>
+									<input type="checkbox" id="sendEmailForEmail" class="check">
+									<label for="sendEmailForEmail" class="checktoggle">checkbox</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="updateDate()">Submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Update Price Modal -->
+
+	<!-- Delivery Modal -->
+	<div id="add_deliver" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body ">
+					<input class="form-control" hidden  id="CustomerBookingId" >
+					
+					@if (vaccineSubscription != null)
+					{
+						@if (vaccineSubscription.VaccineModule)
+						{
+							<div class="form-header">
+								<h3>Vaccine Subscription</h3>
+								<p>Check the box below for daily Vaccine Subscription/ Deliver Product?</p>
+							</div>
+
+							
+							<div class="row">
+								<div class="col-md-6 ml-4">
+									<div class="form-group">
+										<h4>Send SMS</h4>
+										<div class="status-toggle">
+											<input type="checkbox" id="SmsSubscribed" class="check">
+											<label for="SmsSubscribed" class="checktoggle">checkbox</label>
+										</div>
+									</div>
+								</div>
+						
+								<div class="col-md-5">
+									<div class="form-group ">
+										<h4>Send Email</h4>
+										<div class="status-toggle">
+											<input type="checkbox" id="EmailSubscribed" class="check" >
+											<label for="EmailSubscribed" class="checktoggle">checkbox</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<br />
+
+							<div class="modal-btn delete-action">
+								<div class="row">
+									<div class="col-6">
+										<a class="btn btn-primary continue-btn" onclick="updateCustomerBooking()">Deliver</a>
+									</div>
+									<div class="col-6">
+										<a data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+									</div>
+								</div>
+							</div>
+						}
+						else
+						{
+							<div class="form-header">
+								<h3>Delivery Approval</h3>
+								<input class="form-control" type="text" hidden id="deleteId">
+								<p>Are you sure you want to Deliver?</p>
+							</div>
+					
+							<div class="modal-btn delete-action">
+								<div class="row">
+									<div class="col-6">
+										<a class="btn btn-primary continue-btn" onclick="updateCustomerBooking()">Deliver</a>
+									</div>
+									<div class="col-6">
+										<a data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+									</div>
+								</div>
+							</div>
+						}
+
+					}
+					else
+					{
+						<div class="form-header">
+							<h3>Delivery Approval</h3>
+							<input class="form-control" type="text" hidden id="deleteId">
+							<p>Are you sure you want to Deliver?</p>
+						</div>
+					
+						<div class="modal-btn delete-action">
+							<div class="row">
+								<div class="col-6">
+									<a class="btn btn-primary continue-btn" onclick="updateCustomerBooking()">Deliver</a>
+								</div>
+								<div class="col-6">
+									<a data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+								</div>
+							</div>
+						</div>
+					}
+					
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Deliver Modal -->
+	
+	<!-- New Group Modal -->
+	<div id="update-Group" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Move to New Group</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input class="form-control" hidden id="customerBookingId" type="text">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label class="col-form-label">Previous Group</label>
+							<input class="form-control" id="existingGroup" readonly type="text">
+						</div>
+					</div>
+
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label class="col-form-label">New Group <span class="text-danger">*</span></label>
+							<select id="newGroup"  asp-items="@(new SelectList(ViewBag.BookingGroup  ,"Id", "Name" ))" class="form-control"> </select>
+						</div>
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="updateGroup()">Submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /All user New Group Modal -->
+
+	<div id="update-Group-for-all-users" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Move to New Group</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label class="col-form-label">New Group <span class="text-danger">*</span></label>
+							<select id="UserNewGroupId" asp-items="@(new SelectList(ViewBag.BookingGroup  ,"Id", "Name" ))" class="form-control"> </select>
+						</div>
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="moveUserToNewGroup('@Model.GroupId')">Move</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /All user New Group Modal -->
+</div>
+<!-- /Page Wrapper -->
+
+<script>
+function customerBooking(id){
+    $("#CustomerBookingId").val(id);
+}
+</script>

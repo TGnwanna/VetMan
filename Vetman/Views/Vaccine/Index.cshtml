@@ -1,0 +1,323 @@
+﻿@model IEnumerable<Core.ViewModels.VaccineSubscriptionViewModel>
+
+@{
+	ViewData["Title"] = "List of Vaccine Subscriber";
+	Layout = ViewBag.Layout;
+
+}
+<style>
+
+	body {
+	counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+	counter-increment: Serial; /* / Increment the Serial counter /*/
+	content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+
+<!-- Main Wrapper -->
+<div class="page-wrapper">
+
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Vaccine Subscriber List</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active"></li>
+					</ul>
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_subscriber"><i class="fa fa-plus"></i> Add Subscriber</a>
+					@*<a href="#" class="btn add-btn" onclick="AddVaccineSubscribers()"><i class="fa fa-plus"></i> Add Subscriber</a>*@
+					<div class="view-icons">
+						<a href="products.html" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
+						<a href="products-list.html" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+		<!-- Search Filter -->
+		<div class="row filter-row">
+			<div class="col-sm-6 col-md-3">
+				<div class="form-group form-focus">
+					<input type="text" class="form-control floating">
+					<label class="focus-label">Customer ID</label>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<div class="form-group form-focus">
+					<input type="text" class="form-control floating">
+					<label class="focus-label">Product Name</label>
+				</div>
+			</div>
+
+			<div class="col-sm-6 col-md-3">
+				<a href="#" class="btn btn-success btn-block"> Search </a>
+			</div>
+		</div>
+		<!-- /Search Filter -->
+
+		<div class="row">
+
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table datatable">
+						<thead>
+							<tr>
+								<th>S/N</th>
+								<th>Customer Name</th>
+								<th>Product Name</th>
+								<th>Date Delivered</th>
+								<th>Sms Sub</th>
+								<th>Email Sub</th>
+								<th class="text-right no-sort">Action</th>
+							</tr>
+						</thead>
+						@if (Model.Count() > 0 && Model != null)
+						{
+							<tbody>
+								@foreach (var VaccineSubscription in Model)
+								{
+									<tr>
+										<td></td>
+										<td>
+											<h2 class="table-avatar">
+												@if(VaccineSubscription.EmailSubscribed == true || VaccineSubscription.SmsSubscribed == true && VaccineSubscription.SubscriptionStatus == Core.Enums.VetManEnums.SubscriptionStatus.Completed)
+												{
+													<a href="profile.html">@VaccineSubscription.FullName<span class="barge bg-inverse-primary">@VaccineSubscription.SubscriptionStatus</span></a>
+												}
+												else if(VaccineSubscription.EmailSubscribed == true || VaccineSubscription.SmsSubscribed == true && VaccineSubscription.SubscriptionStatus == Core.Enums.VetManEnums.SubscriptionStatus.Active)
+												{
+													<a href="profile.html">@VaccineSubscription.FullName<span class="barge bg-inverse-success">@VaccineSubscription.SubscriptionStatus</span></a>
+												}
+												else
+												{
+													<a href="profile.html">@VaccineSubscription.FullName<span class="barge bg-inverse-danger">@VaccineSubscription.SubscriptionStatus</span></a>
+												}	
+											</h2>
+										</td>
+										<td>@VaccineSubscription.ProductName</td>
+										<td>@VaccineSubscription.DateDelivered.ToString("D")</td>
+										<td>@VaccineSubscription.SmsSubscribed</td>
+										<td>@VaccineSubscription.EmailSubscribed</td>
+										<td class="text-right">
+											<div class="dropdown dropdown-action">
+												<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+												<div class="dropdown-menu dropdown-menu-right">
+													<a class="dropdown-item" @*data-toggle="modal" data-target="#edit_product"*@ onclick="ShowVaccineSubscriber('@VaccineSubscription.Id')"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+													<a class="dropdown-item" data-toggle="modal" data-target="#completed_subscription" onclick="GetVaccineSubscriptionId('@VaccineSubscription.Id')"><i class="fa fa-th-list  m-r-5"></i>Completed </a>
+													<a class="dropdown-item" data-toggle="modal" data-target="#cancel_subscription" onclick="GetVaccineSubscriptionId('@VaccineSubscription.Id')"><i class="fa fa-ban m-r-5"></i>Cancel</a>
+													<a class="dropdown-item" data-toggle="modal" data-target="#delete_subscription" onclick="GetVaccineSubscriptionId('@VaccineSubscription.Id')"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+												</div>
+											</div>
+										</td>
+									</tr>
+								}
+							</tbody>
+						}
+					</table>
+				</div>
+			</div>
+				
+			</div>
+		</div>
+		<!-- /Page Content -->
+
+
+		<!-- Add Subscriber Modal -->
+		<div id="add_subscriber" class="modal custom-modal fade" role="dialog">
+			<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Add Vaccine Subscriber</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body" >
+						<div class="row">
+							<div class="col-sm-6">
+								<label class="col-form-label">Product Name <span class="text-danger">*</span></label>
+								<select id="productId" asp-items="@(new SelectList(ViewBag?.Product  ,"Id", "Name" ))" class="form-control"> </select>
+							</div>
+							<div class="col-sm-6" id="searchedNames">
+								<div class="form-group">
+									<label class="col-form-label">Customer Name <span class="text-danger">*</span></label>
+									<input class="form-control userAutoComp" placeholder="Enter first Name" id="customerNameSearch" >
+									<input class="form-control" hidden id="save" >
+								</div>
+							</div>
+							
+						</div>
+						
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label class="col-form-label"> Product Delivery Date<span class="text-danger">*</span></label>
+									<input class="form-control" id="date" type="date">
+								</div>
+							</div>
+							
+							<div class="col-sm-3">
+								<div class="form-group mt-4">
+									<h4>Send SMS</h4>
+									<div class="status-toggle">
+										<input type="checkbox" id="SmsSubscribed" class="check" >
+										<label for="SmsSubscribed" class="checktoggle">checkbox</label>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group mt-4">
+									<h4>Send Email</h4>
+									<div class="status-toggle">
+										<input type="checkbox" id="EmailSubscribed" class="check" >
+										<label for="EmailSubscribed" class="checktoggle">checkbox</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="submit-section">
+							<button class="btn btn-primary submit-btn" onclick="CreateSubscriber()">Submit</button>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Add Subscriber Modal -->
+		<!-- Edit Subscriber Modal -->
+		<div id="edit_subscriber" class="modal custom-modal fade" role="dialog">
+			<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Edit Vaccine Subscriber</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<h4>Send SMS</h4>
+									<div class="status-toggle">
+										<input type="text" id="editId" hidden class="form-control">
+										<input type="checkbox" id="editSmsSubscribed" class="check">
+										<label for="editSmsSubscribed" class="checktoggle">checkbox</label>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-4">
+								<div class="form-group">
+									<h4>Send Email</h4>
+									<div class="status-toggle">
+										<input type="text" id="editId" hidden class="form-control">
+										<input type="checkbox" id="editEmailSubscribed" class="check" >
+										<label for="editEmailSubscribed" class="checktoggle">checkbox</label>
+									</div>
+								</div>
+							</div>
+							
+						    <div class="col-sm-4">
+							  <div class="form-group">
+								<h4>Date</h4>
+								@*<label class="col-form-label">Date<span class="text-danger">*</span></label>*@
+								<input class="form-control" id="edit_date" type="date">
+								
+							  </div>
+						    </div>
+						</div>
+						<div class="submit-section">
+							<button class="btn btn-primary submit-btn" onclick="SaveEditedSubscriber()">Save</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Edit Subscriber Modal -->
+		<!-- Cancel Subscription Modal -->
+		<div class="modal custom-modal fade" id="cancel_subscription" role="dialog">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="form-header">
+							<h3>Cancel Subscription</h3>
+							<input class="form-control" type="text" hidden id="cancelId">
+							<p>Are you sure want to Cancel?</p>
+						</div>
+						<div class="modal-btn delete-action">
+							<div class="row">
+								<div class="col-6">
+									<a class="btn btn-primary continue-btn" onclick="CancelSubscriber()">Yes</a>
+								</div>
+								<div class="col-6">
+									<a data-dismiss="modal" class="btn btn-primary cancel-btn">No</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Cancel Subscription Modal -->
+
+		<!-- Completed Subscription Modal -->
+		<div class="modal custom-modal fade" id="completed_subscription" role="dialog">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="form-header">
+							<h3>Completed Subscription</h3>
+							<input class="form-control" type="text" hidden id="completedId">
+							<p>Are you sure Subscription is Completed?</p>
+						</div>
+						<div class="modal-btn delete-action">
+							<div class="row">
+								<div class="col-6">
+									<a class="btn btn-primary continue-btn" onclick="CompletedSubscriber()">Yes</a>
+								</div>
+								<div class="col-6">
+									<a data-dismiss="modal" class="btn btn-primary cancel-btn">No</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Completed Subscription Modal -->
+
+		<!-- Delete Subscription Modal -->
+		<div class="modal custom-modal fade" id="delete_subscription" role="dialog">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="form-header">
+							<h3>Delete Subscription</h3>
+							<input class="form-control" type="text" hidden id="deleteId">
+							<p>Are you sure want to delete?</p>
+						</div>
+						<div class="modal-btn delete-action">
+							<div class="row">
+								<div class="col-6">
+									<a class="btn btn-primary continue-btn" onclick="VaccineStatusDeleted()">Delete</a>
+								</div>
+								<div class="col-6">
+									<a data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Delete Subscription Modal -->
+	</div>

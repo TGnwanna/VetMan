@@ -1,0 +1,63 @@
+﻿
+@{
+	ViewData["Title"] = "Login";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+	<div class="account-content">
+		<div class="container">
+			<!-- Account Logo -->
+			<div class="account-logo">
+				<a href="index.html"><img src="/light/assets/img/logo.png"></a>
+			</div>
+			<!-- /Account Logo -->
+
+			<div class="account-box">
+				<div class="account-wrapper">
+					<h3 class="account-title">Login</h3>
+						<div class="form-group">
+						<label>Email Address<span class="text-danger">*</span></label>
+							<input class="form-control" id="email" required type="text">
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<div class="col">
+								<label>Password<span class="text-danger">*</span></label>
+								</div>
+								<div class="col-auto">
+									<a class="text-muted" href="#">
+										Forgot password?
+									</a>
+								</div>
+							</div>
+							<input class="form-control" required id="password" type="password">
+						</div>
+						<div class="form-group text-center">
+						<button class="btn btn-primary account-btn" onclick="login()" type="submit">Login</button>
+						</div>
+						<div class="account-footer">
+						<p>Don't have an account yet? <a asp-action="CompanyRegistration" asp-controller="Account">Register Company</a></p>
+						</div>
+					<!-- /Account Form -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Main Wrapper -->
+@*<script>
+	$('.validateLogIn').change(function () {
+		debugger;
+		var email = $('#email').val();
+		var password = $('#password').val();
+		if (email != "" && password != "") {
+			$("#submit").removeClass('disabled');
+		}
+		else {
+			$("#submit").hasClass('disabled');
+		}
+	});
+</script>*@
+ 

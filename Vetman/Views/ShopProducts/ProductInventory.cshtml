@@ -1,0 +1,154 @@
+﻿﻿@{
+	Layout = ViewBag.Layout;
+}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+		<div class="card tab-box">
+			<div class="row user-tabs">
+				<div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
+					<ul class="nav nav-tabs nav-tabs-bottom">
+
+						<li class="nav-item"><a href="#new_user_product" data-toggle="tab" class="nav-link active">Add New Product To Shop </a></li>
+						<li class="nav-item"><a href="#existing_user" data-toggle="tab" class="nav-link ">Restock Shop Product</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<!-- New Client Tab -->
+			<div id="new_user_product" class="pro-overview tab-pane fade show active">
+				<div class="card col-sm-12 col-md-12 col-lg-8 col-xl-8 m-auto">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Supplier <span class="text-danger">*</span></label>
+									<select id="supplierId" asp-items="@(new SelectList(ViewBag?.Supplier  ,"Id", "Name" ))" class="form-control makeFilter"> </select>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Product Name <span class="text-danger">*</span></label>
+									<input type="text" class="form-control" placeholder="N/A" id="shopProduct" required>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Product Category <span class="text-danger">*</span></label>
+									<select id="shopCategoryId" asp-items="@(new SelectList( ViewBag?.ProductCategories  ,"Id", "Name" ))" class="form-control makeFilter"> </select>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Unit <span class="text-danger">*</span></label>
+									<select id="unit" asp-items="@(new SelectList(ViewBag?.Units ,"Id","Name"))" class="form-control makeFilter"></select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Quantity Bought <span class="text-danger">*</span></label>
+									<input type="number" class="form-control"  id="qtyBought" required  >
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Total Amount of Quantity Bought</label>
+									<input type="number" class="form-control" placeholder="N/A" id="priceOfQtyBought" >
+								</div>
+							</div>
+						</div>		
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Selling Price <span class="text-danger">*</span></label>
+									<input type="number" class="form-control"  id="pricePerUnitProduct" required>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									 <label class="col-form-label">Product Image</label>
+				                    <div class="form-group">
+				                        <input type="file" class="form-control" data-buttontext="Choose File" data-icon="false" data-classbutton="btn btn-default" 
+										accept="image/png, image/gif, image/jpg, image/jpeg" data-classinput="form-control inline input-s" name="receipt" id="Logo">
+				                    </div>
+								</div>
+							</div>
+						</div>	
+						<div class="submit-section">
+							<button class="btn btn-primary submit-btn" onclick="NewProductSale()" type="submit">Add Sale</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /New Client Tab -->
+			<!-- Existing Client Tab -->
+			<div class="tab-pane fade" id="existing_user">
+				<div class="card col-sm-12 col-md-12 col-lg-8 col-xl-8 m-auto">
+					<div class="card-body">
+						<h3 class="card-title"> Add To Shop</h3>
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Supplier <span class="text-danger">*</span></label>
+									<select onchange="updateStockDetail()" id="restockSupplierId" asp-items="@(new SelectList(ViewBag?.Supplier  ,"Id", "Name" ))" class="form-control"> </select>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Product Name <span class="text-danger">*</span></label>
+									<select onchange ="updateStockDetail()" id="restockProductId" asp-items="@(new SelectList(ViewBag?.Products  ,"Id", "Name" ))" class="form-control"> </select>
+								</div>
+							</div>
+						</div>
+							<hr>
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Quantity Bought <span class="text-danger">*</span></label>
+									<input type="number" class="form-control" id="restockQty" required>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Total Amount of Quantity Bought</label>
+									<input type="number" class="form-control" placeholder="N/A" id="restockTotalAmountPaid">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									<label class="col-form-label">Price Per Unit <span class="text-danger">*</span></label>
+									<input type="number" class="form-control" id="restockPerUnitPrice" required>
+								</div>
+							</div>
+							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+								<div class="form-group">
+									 <label class="col-form-label">Product Image</label>
+				                    <div class="form-group">
+				                        <input type="file" class="form-control" data-buttontext="Choose File" data-icon="false" data-classbutton="btn btn-default" 
+										accept="image/png, image/gif, image/jpg, image/jpeg" data-classinput="form-control inline input-s" name="receipt" id="Logo">
+				                    </div>
+								</div>
+							</div>
+						</div>	
+						<div class="submit-section">
+							<button class="btn btn-primary submit-btn" onclick="shopRestock()" type="submit">Save</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /Existing Client Tab -->
+		</div>
+	</div>
+	<!-- /Page Content -->
+</div>
+<!-- /Page Wrapper -->

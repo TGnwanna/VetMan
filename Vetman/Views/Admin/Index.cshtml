@@ -1,0 +1,427 @@
+﻿@model Core.ViewModels.AdminDashboardViewModel
+@{
+	ViewData["Title"] = "Index";
+	Layout = ViewBag.Layout;
+}
+
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row">
+				<div class="col-sm-12">
+					<h3 class="page-title">Welcome Admin!</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item active">Dashboard</li>
+					</ul>
+				</div>
+				<div class="col-sm-12">
+					<a href="#" class="btn add-btn" id="link"><i class="fa fa-plus"></i>Get Company Link</a>
+					<input type="text" id="hidelink" name="name" hidden />
+				</div>
+			</div>
+			
+			
+		</div>
+		<!-- /Page Header -->
+
+		<div class="row">
+			<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+				<div class="card dash-widget">
+					<div class="card-body">
+						<span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
+						<div class="dash-widget-info">
+							<h3>@Model?.BookingGroupCount</h3>
+							<a href="/Admin/BookingGroup" class="stretched-link text-decoration-none text-dark"><span>Booking Groups</span></a>
+						</div>
+					</div>
+				</div>	
+			</div>
+			<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+				<div class="card dash-widget">
+					<div class="card-body">
+						<span class="dash-widget-icon"><i class="la la-user-plus"></i></span>
+						<div class="dash-widget-info">
+							<h3>@Model?.CustomerCount</h3>
+							<a href="/User/Customer" class="stretched-link text-decoration-none text-dark"><span>Customers</span></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+				<div class="card dash-widget">
+					<div class="card-body">
+						<span class="dash-widget-icon"><i class="fa fa-cogs"></i></span>
+						<div class="dash-widget-info">
+							<h3>@Model?.Branches.Count()</h3>
+							<a href="/Branches/Index" class="stretched-link text-decoration-none text-dark"><span>Branches</span></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+				<div class="card dash-widget">
+					<div class="card-body">
+						<span class="dash-widget-icon"><i class="fa fa-user"></i></span>
+						<div class="dash-widget-info">
+							<h3>@Model?.Staff?.Count()</h3>
+							<a href="/Staff/CompanyStaff" class="stretched-link text-decoration-none text-dark"><span>Staff</span></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row">
+					
+					<div class="col-md-12 text-center">
+						<div class="card">
+							<div class="card-body">
+								<h3 class="card-title"> Booking Overview</h3>
+								<div id="line-charts"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		@*<div class="row">
+			<div class="col-md-12">
+				<div class="card-group m-b-30">
+					@if (@Model?.BookingGroup?.Count() > 0)
+					{
+						var count = 0;
+						@foreach (var group in @Model?.BookingGroup)
+						{
+							if (count <=  4)
+							{
+								<div class="card">
+									<div class="card-body">
+										<div class="d-flex justify-content-between mb-3">
+											<div>
+												<span class="d-block">@group.Name</span>
+											</div>
+											<div>
+												<span class="text-success">@group.ProductName</span>
+											</div>
+										</div>
+										<h3 class="mb-3"> &#x20A6; @group.ExpectedPrice</h3>
+										<div class="progress mb-2" style="height: 5px;">
+											<div class="progress-bar bg-primary" role="progressbar" style="width: 70%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+										</div>
+										<p class="mb-0">@group.TotalQuantityBooked <span class="text-muted">$1,15,852</span></p>
+									</div>
+								</div>
+							}
+							else{ continue; }
+							count++;
+						}
+					}
+					
+				</div>
+			</div>
+		</div>*@
+
+		<!-- Statistics Widget -->
+		<div class="row">
+			@if (@Model?.BookingGroup?.Count() > 0)
+			{
+				var count = 0;
+				@foreach (var group in @Model?.BookingGroup)
+				{
+					if (count <= 5)
+					{
+						<div class="col-md-12 col-lg-4 col-xl-4 d-flex">
+							<div class="card flex-fill">					
+								<div class="card-body">
+								<h4 class="card-title">@group.Name</h4>
+						
+									<div class="statistics">
+										<div class="row">
+											<div class="col-md-6 col-6 text-center">
+												<div class="stats-box mb-4">
+													<p>Total Paid</p>
+													<h3>&#x20A6 @String.Format("{0:n}",group.TotalPaid)</h3>
+												</div>
+											</div>
+											<div class="col-md-6 col-6 text-center">
+												<div class="stats-box mb-4">
+													<p>Total Balance</p>
+													<h3>&#x20A6 @String.Format("{0:n}",group.TotalBalance)</h3>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="progress mb-4">
+										<div class="progress-bar bg-purple" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">30%</div>
+										<div class="progress-bar bg-warning" role="progressbar" style="width: 22%" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100">22%</div>
+										<div class="progress-bar bg-success" role="progressbar" style="width: 24%" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100">24%</div>
+										<div class="progress-bar bg-danger" role="progressbar" style="width: 26%" aria-valuenow="14" aria-valuemin="0" aria-valuemax="100">21%</div>
+										<div class="progress-bar bg-info" role="progressbar" style="width: 10%" aria-valuenow="14" aria-valuemin="0" aria-valuemax="100">10%</div>
+									</div>
+									<div>
+										<p><i class="fa fa-dot-circle-o text-purple mr-2"></i> Total Quantity Booked <span class="float-right">@group.TotalQuantityBooked</span></p>
+										<p><i class="fa fa-dot-circle-o text-warning mr-2"></i> Expected Cost Price <span class="float-right">&#x20A6 @String.Format("{0:n}",group.ExpectedPrice)</span></p>
+										<p><i class="fa fa-dot-circle-o text-success mr-2"></i>Motality Recorded  <span class="float-right">@group.MotalityRecorded</span></p>
+										<p><i class="fa fa-dot-circle-o text-danger mr-2"></i>Supply Price <span class="float-right">&#x20A6 @String.Format("{0:n}",group.SupplyPrice)</span></p>
+										@*<p class="mb-0"><i class="fa fa-dot-circle-o text-info mr-2"></i>Review Tasks <span class="float-right">5</span></p>*@
+									</div>
+								
+								</div>
+								
+
+							</div>
+						
+						</div>
+					}
+					else { continue; }
+					count++;
+				}
+			}
+		</div>
+		<!-- /Statistics Widget -->
+
+		<div class="row">
+			<div class="col-md-6 d-flex">
+				<div class="card card-table flex-fill">
+					<div class="card-header">
+						<h3 class="card-title mb-0">Wallet</h3>
+					</div>
+					
+					@if (Model?.Wallets?.Count() > 0)
+					{
+						var count = 0;
+						
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-nowrap custom-table mb-0">
+									<thead>
+										<tr>
+
+											<th>Amount</th>
+											<th>Balance</th>
+											<th>Transaction Type</th>
+											<th>Date</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach(var wallet in Model.Wallets)
+										{
+											if (count <= 4)
+											{
+												<tr>
+													<td><a href="#">@wallet.Amount</a></td>
+													<td>
+														<h2><a href="#">@wallet.Balance</a></h2>
+													</td>
+													<td>
+														<span class="badge bg-inverse-warning">@wallet.TransactionType</span>
+													</td>
+													<td>@wallet.Date</td>
+												
+												</tr>
+											}
+											else { continue; }
+											count++;
+										}
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="card-footer">
+							<a asp-controller="Wallet" asp-action="Index">View all wallet history</a>
+						</div>
+						
+					}
+					
+				</div>
+			</div>
+			<div class="col-md-6 d-flex">
+				<div class="card card-table flex-fill">
+					<div class="card-header">
+						<h3 class="card-title mb-0">Branches</h3>
+					</div>
+					@if (Model?.Branches?.Count() > 0)
+					{
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table custom-table table-nowrap mb-0">
+									<thead>
+										<tr>
+											<th>Branch Name</th>
+											<th>Address</th>
+											<th>Date Created</th>
+											<th>Active</th>
+											
+										</tr>
+									</thead>
+									<tbody>
+										@foreach(var branch in Model.Branches)
+										{
+											<tr>
+
+												<td>@branch.Name</td>
+												<td>@branch.Address</td>
+												<td>@branch.DateCreated.ToString("d")</td>
+												<td>@branch.Active</td>
+																								
+											</tr>
+											
+										}
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="card-footer">
+							<a asp-controller="Branches" asp-action="Index">View all branches</a>
+						</div>
+					}
+					
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6 d-flex">
+				<div class="card card-table flex-fill">
+					<div class="card-header">
+						<h3 class="card-title mb-0">Customers</h3>
+					</div>
+					@if (Model?.Customers?.Count() > 0)
+					{
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table custom-table mb-0">
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th>Email</th>
+											<th>Phone</th>
+											<th class="text-center">Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										
+										@foreach(var customer in Model.Customers)
+										{
+											<tr>
+												<td>
+													<h2 class="table-avatar">
+														@*<a href="#" class="avatar"><img alt="" src="assets/img/profiles/avatar-19.jpg"></a>*@
+														<a href="#">@customer.FullName </a>
+													</h2>
+												</td>
+												<td>@customer.Email</td>
+												<td>@customer.PhoneNumber</td>
+												<td>
+													<div class="dropdown action-label">
+														<a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
+															<i class="fa fa-dot-circle-o text-success"></i> Active
+														</a>
+														<div class="dropdown-menu dropdown-menu-right">
+															<a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-success"></i> Active</a>
+														</div>
+													</div>
+												</td>
+											</tr>
+										}
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="card-footer">
+							<a asp-controller="User" asp-action="Customer">View all Customers</a>
+						</div>
+					}
+					
+				</div>
+			</div>
+			<div class="col-md-6 d-flex">
+				<div class="card card-table flex-fill">
+					<div class="card-header">
+						<h3 class="card-title mb-0">Staff</h3>
+					</div>
+					@if (Model?.Staff?.Count() > 0)
+					{
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table custom-table mb-0">
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th>Email</th>
+											<th>Phone</th>
+											<th class="text-center">Date Registered</th>
+										</tr>
+									</thead>
+									<tbody>
+
+										@foreach (var staff in Model.Staff)
+										{
+											<tr>
+												<td>
+													<h2 class="table-avatar">
+														@*<a href="#" class="avatar"><img alt="" src="assets/img/profiles/avatar-19.jpg"></a>*@
+														<a href="#">@staff.FullName </a>
+													</h2>
+												</td>
+												<td>@staff.Email</td>
+												<td>@staff?.PhoneNumber</td>
+												<td>@staff?.DateRegistered</td>
+											</tr>
+										}
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="card-footer">
+							<a asp-controller="Staff" asp-action="CompanyStaff">View all Staff</a>
+						</div>
+					}
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+		<!-- /Page Content -->
+		@Html.HiddenFor(x => x.StopDate, new {Id = "stopDate"})
+	
+	<div id="moduleInfo" class="modal custom-modal  " aria-modal="true" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content  border border-warning ">
+				<div class="modal-header">
+					<h2>Subscription Notification</h2>
+					<button type="button" class="close" onclick="CloseModal()" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+					<hr>
+
+				<div class="modal-body">
+					<div class="col-sm-12" align="center" >
+						<h4>The Subscription will Expiry in <strong>@Model.StopDate</strong> Day(s) time.</h4>
+					</div>
+					<div class="col-sm-12">
+						<div class="submit-section" align="center">
+							<a type="button" asp-controller="Subscription" asp-action="Index" class="btn btn-primary text-white">Subscribe</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Page Wrapper -->
+
+	

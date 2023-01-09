@@ -1,0 +1,202 @@
+﻿@model Core.ViewModels.CustomerBookingViewModel
+@{
+    ViewData["Title"] = "Group Summary";
+	Layout = ViewBag.Layout;
+}
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row">
+				<div class="col-sm-12">
+					<h3 class="page-title">@Model?.BookingGroupName Group Report</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active">Group Report</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+		@if (Model != null)
+		{
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-group m-b-30">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Quantity Booked</span>
+									</div>
+								</div>
+								<h3 class="mb-3">@Model.QuantityBooked</h3>
+							</div>
+						</div>
+
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Total Paid</span>
+									</div>
+								</div>
+								<h3 class="mb-3" id="totalPaid">@Model.TotalPaid </h3>
+							</div>
+						</div>
+
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Expected Balance</span>
+									</div>
+								</div>
+								<h3 class="mb-3" id="balance">@Model.Balance </h3>
+							</div>
+						</div>
+
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Supply Price</span>
+									</div>
+								</div>
+								<h3 class="mb-3">@Model.SupplyPrice</h3>
+							</div>
+						</div>
+					</div>
+					<div class="card-group m-b-30">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Mortality Recorded</span>
+									</div>
+								</div>
+								<h3 class="mb-3">@Model.MotalityRecorded</h3>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Quantity Left</span>
+									</div>
+								</div>
+								<h3 class="mb-3">@Model.QuantityLeft</h3>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Quantity Arrived</span>
+									</div>
+								</div>
+								<h3 class="mb-3">@Model.QuantityArrived</h3>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Quantity Sold</span>
+									</div>
+								</div>
+								<h3 class="mb-3">@Model.QuantitySold</h3>
+							</div>
+						</div>
+					</div>
+					<div class="card-group m-b-30">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Potential Profit</span>
+									</div>
+								</div>
+								<h3 class="mb-3" id="amtId">@Model.PotentialProfit</h3>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Total Booked</span>
+									</div>
+								</div>
+								<h3 class="mb-3">@Model.TotalBooked</h3>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Total Canceled</span>
+									</div>
+								</div>
+								<h3 class="mb-3">@Model.TotalCancelled</h3>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Total Delivered</span>
+									</div>
+								</div>
+								<h3 class="mb-3">@Model.TotalDelivered</h3>
+							</div>
+						</div>
+					</div>
+					<div class="card-group m-b-30">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex justify-content-between mb-3">
+									<div>
+										<span class="d-block">Profit Made</span>
+									</div>
+								</div>
+								<h3 class="mb-3" id="profitId">@Model.ProfitMade</h3>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+	<!-- /Page Content -->
+
+</div>
+<!-- /Page Wrapper -->
+
+<script>
+	(function () {
+		debugger;
+		var amt = @Model?.PotentialProfit;
+		var bal = @Model?.Balance;
+		var tolPaid =@Model?.TotalPaid;
+		var profitAmt = @Model?.ProfitMade;
+		debugger;
+
+		var totalAmt = amt.toLocaleString('en-US');
+		document.getElementById("amtId").innerHTML = totalAmt + "<span> NGN</span>";
+
+		var totalProfitAmt = profitAmt.toLocaleString('en-US');
+		document.getElementById("profitId").innerHTML = totalProfitAmt + "<span> NGN</span>";
+
+		var totalbalance = bal.toLocaleString('en-US');
+		document.getElementById("balance").innerHTML = totalbalance + "<span> NGN</span>";
+
+		var totalPaid = tolPaid.toLocaleString('en-US');
+		document.getElementById("totalPaid").innerHTML = totalPaid + "<span> NGN</span>";
+
+	})();
+</script>

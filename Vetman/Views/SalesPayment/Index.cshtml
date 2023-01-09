@@ -1,0 +1,220 @@
+﻿@model Core.ViewModels.SalesPaymentViewModel;
+@{
+	Layout = ViewBag.Layout;
+	ViewData["Title"] = "Sales Payment";
+}
+<style>
+
+	body {
+	counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+	counter-increment: Serial; /* / Increment the Serial counter /*/
+	content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container col-xl-8">
+
+		<div>
+			<!-- New Client Tab -->
+			<div class="col-sm-100 col-md-100 col-lg-50 col-xl-50">
+				<div class="card w-100 mb-4 m-auto">
+					<div class="card-body ">
+					<h2 class="card-title"> Sales Payment</h2>
+					<div class="row">
+							<label class="col-sm-3 col-form-label">Payment Date <span class="text-danger">*</span></label>
+							<div class="col-sm-7">
+								<input type="date" class="form-control" id="date_created">
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-sm-3 col-form-label">Order ID <span class="text-danger">*</span></label>
+						<div class="col-sm-7 mt-2">
+							<strong>@Model.OrderId</strong>
+							 @Html.HiddenFor(t => t.OrderId, new { id = "OrderId" })
+						</div>
+					</div>
+					<div class="row">
+							<label class="col-sm-3 col-form-label">Total Amount <span class="text-danger">*</span></label>
+							<div class="col-sm-7">
+							<strong><span>NGN @Model.Amount</span></strong>
+							 @Html.HiddenFor(t => t.Amount, new { id = "totalPaid" })
+						</div>
+					</div>
+					 @Html.HiddenFor(t => t.SalesLogsId, new { id = "salesLogsId" })
+					<hr />
+					<h2 class="card-title"> Set Payment Method</h2>
+					<div class="col-sm-12">
+						<div class="form-group form-check">
+							  <input type="radio" id="paid_cash" name="paidCash" onchange="enable()" style="accent-color:#FF9B44" /> Paid with Cash
+						</div>
+						<div class="form-group d-none" id="select_cash" >
+							<label class="col-form-label">Amount Paid </label>
+							<input type="number" class="form-control" placeholder="Enter Amount" id="amountPaid">
+						</div>
+					</div>
+
+					<hr />
+
+					<div class="col-sm-12">
+						<div class="form-group form-check ">
+							<input type="radio" id="paid_bank" name="paidCash" onchange="enable()" style="accent-color:#FF9B44"/> Paid with Bank
+						</div>
+						<div class="form-group d-none" id="select_device">
+							<label class="col-form-label">Select Bank </label><span><a href="#" class="text-success float-right mt-2"  data-toggle="modal" data-target="#add_bank_name">Add Bank</a></span>
+							<select id="Select_bank" asp-items="@(new SelectList(ViewBag.GetBank, "Id", "Name" ))" class="form-control"> </select>
+						</div>
+						<div class="row ">
+							<div class="form-group d-none col-sm-6" id="select_device2" >
+								<label class="col-form-label">Select means of payment </label><span><a href="#" class="text-success float-right mt-2"  data-toggle="modal" data-target="#add_payment_means">Add Means</a></span>
+								<select id="Select_payment" class="form-control"> </select> @*asp-items="@(new SelectList(ViewBag.GetMeansOfPayment, "Id", "Name"))"*@
+							</div>
+							<div class="form-group d-none col-sm-6 mt-3" id="select_device3">
+								<label class="col-form-label"></label><span><a href="#" class="text-danger float-right"  data-toggle="modal" data-target="#Remove_bank_name">Remove Bank</a></span>
+								<input type="number" class="form-control" id="amountEntered"  placeholder="Enter Amount">
+							</div>
+						</div>
+						
+					</div>
+
+					<hr>
+					<div class="row">
+							<label class="col-sm-3 col-form-label">Amount to Apply:</label>
+							<div class="col-sm-7">
+							<strong>NGN</strong><input type="number" class="form-control" readonly placeholder="N/A" id="amount_to_apply">
+						</div>
+					</div>
+					<div class="row">
+							<label class="col-sm-3 col-form-label">Balance: <span class="text-danger">*</span></label>
+							<div class="col-sm-7">
+							<strong>NGN</strong><input type="number" class="form-control" readonly placeholder="N/A" id="balance">
+						</div>
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="CreatePayment()" type="submit">Record Payment</button>
+					</div>
+				</div>
+				</div>
+			</div>
+			
+			<!-- /New Client Tab -->
+		</div>
+	</div>
+	<!-- /Page Content -->
+
+	<!-- Add bank Modal -->
+	<div id="add_bank_name" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Bank</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="col-sm-12"  >
+						<label class="col-form-label" >Bank Name <span class="text-danger">*</span></label>
+						<input class="form-control"align="center" type="text" id="bank_Name">
+					</div>
+					<div class="col-sm-12">
+						<div class="submit-section" align="center">
+							<button class="btn btn-primary submit-btn" onclick="RegisterBanks()">Submit </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Add bank Modal -->
+	<!-- Add payment means Modal -->
+	<div id="add_payment_means" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Payment Means</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-6" >
+						<label class="col-form-label" > Payment means Name <span class="text-danger">*</span></label>
+						<input class="form-control"align="center" placeholder="Enter transfer or others" type="text" id="bank_payment_means">
+					</div>
+					<div class="col-sm-6"  >
+						<label class="col-form-label" > Bank <span class="text-danger">*</span></label>
+						<select asp-items="@(new SelectList(ViewBag.GetBank, "Id", "Name" ))"  class="form-control" align="center" id="payment_meansBank"></select>
+					</div>
+					</div>
+					
+					<div class="col-sm-12">
+						<div class="submit-section" align="center">
+							<button class="btn btn-primary submit-btn" onclick="PaymentMeans()">Submit </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Add payment means Modal -->
+
+	<!-- remove bank Modal -->
+	<div id="Remove_bank_name" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Bank</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table table-striped custom-table datatable">
+							<thead>
+								<tr>
+									<th>S/N</th>
+									<th>Product type Name</th>
+									<th>Date Created</th>
+									<th>Active</th>
+									<th class="text-right no-sort">Action</th>
+								</tr>
+							</thead>
+							@if (Model.Banks.Count() > 0 && Model != null)
+							{
+								<tbody>
+									@foreach (var Banks in Model.Banks)
+									{
+										<tr>
+											<td></td>
+											<td>@Banks.Name</td>
+											<td>@Banks.DateCreated.ToString("D")</td>
+											<td>@Banks.Active</td>
+											<td class="text-right">
+												<div class="dropdown dropdown-action">
+													<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+													<div class="dropdown-menu dropdown-menu-right">
+														<a class="dropdown-item" onclick="DeleteBank('@Banks.Id')"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+													</div>
+												</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							}
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /remove bank Modal -->
+</div>
+<!-- /Page Wrapper -->

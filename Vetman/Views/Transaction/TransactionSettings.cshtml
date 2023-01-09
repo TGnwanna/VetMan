@@ -1,0 +1,178 @@
+﻿@model IEnumerable<Core.ViewModels.TransactionSettingsViewModel>
+@{
+    ViewData["Title"] = "Transaction Settings";
+    Layout = ViewBag.Layout;
+}
+<style>
+	.text_large {
+		font-size: 100%;
+	}
+</style>
+
+
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+			
+	<!-- Page Content -->
+    <div class="content container-fluid">
+				
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Transaction SetUp</h3>
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_type"><i class="fa fa-plus"></i> Add New</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+					
+		<div class="row">
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table mb-0 datatable">
+						<thead>
+							<tr>
+								<th style="width: 30px;">Sn</th>
+								<th>Sender Name</th>
+								<th>KeyWord</th>
+								<th>Valid Message Checker</th>
+								<th class="text-right">Action</th>
+							</tr>
+						</thead>
+						@if (Model != null && Model.Count() > 0)
+						{
+							<tbody>
+								@foreach (var setup in Model)
+								{
+									<tr>
+										<td> </td>
+										<td>@setup.SenderName</td>
+										<td>@setup.KeyWord</td>
+										<td>@setup.ValidMessageChecker</td>
+										<td class="text-right">
+											<div class="dropdown dropdown-action">
+												<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+												<div class="dropdown-menu dropdown-menu-right">
+													<a class="dropdown-item" href="#" data-toggle="modal" data-target="#edit_type" onclick="transactionSetUpToBeEdidted(@setup.Id)"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+													<a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_type" onclick="transactionDetailsToBeDeleted(@setup.Id)"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+												</div>
+											</div>
+										</td>
+									</tr>
+								}
+							</tbody>
+						}
+					</table>
+				</div>
+			</div>
+		</div>
+    </div>
+	<!-- /Page Content -->
+
+	<!-- Add Transaction Setting Modal -->
+	<div id="add_type" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">SetUp Transaction</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Sender Name<span class="text-danger">*</span></label>
+						<input class="form-control" placeholder="AccessBank" type="text" id="sender">
+					</div>
+					<div class="form-group">
+						<label>KeyWord <span class="text-danger">*</span></label>
+						<input class="form-control" placeholder="Avail Bal" id="keyword">
+					</div>
+					<div class="form-group">
+						<label>Valid Message Check <span class="text-danger">Optional</span></label>
+						<input class="form-control" placeholder="Credit" id="validMessageChecker">
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="transactionSetUp()">Submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Add Transaction Setting Modal -->
+	<!-- Edit Transaction Setting Modal -->
+	<div id="edit_type" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Transaction SetUp</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<input class="form-control" type="text" hidden id="transactionSettingsId">
+					<div class="form-group">
+						<label>Sender Name<span class="text-danger">*</span></label>
+						<input class="form-control" type="text" id="editedSender">
+					</div>
+					<div class="form-group">
+						<label>KeyWord <span class="text-danger">*</span></label>
+						<input class="form-control" id="editedKeyword">
+					</div>
+					<div class="form-group">
+						<label>Valid Message Check <span class="text-danger">Optional</span></label>
+						<input class="form-control" id="editedValidMessageChecker">
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="edittransactionSetUp()">Submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Edit Transaction Setting Modal -->
+	<!-- Delete Transaction Setting Modal -->
+	<div class="modal custom-modal fade" id="delete_type" role="dialog">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="form-header">
+						<h3>Delete Transaction SetUp</h3>
+						<p>Are you sure want to delete?</p>
+					</div>
+					<div class="modal-btn delete-action">
+						<input class="form-control" id="transactionSettingId" hidden>
+						<div class="row">
+							<div class="col-6">
+								<a onclick="deleteTransactionSetUp()" class="btn btn-primary continue-btn">Delete</a>
+							</div>
+							<div class="col-6">
+								<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Delete Transaction Setting Modal -->
+			
+</div>
+<!-- /Page Wrapper -->
+

@@ -1,0 +1,297 @@
+﻿@{
+	ViewData["Title"] = "Record Patients Visit";
+	Layout = ViewBag.Layout;
+}
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+	<div class="content container-fluid">
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row">
+				<div class="col">
+					<h3 class="page-title">Record Patients Visit</h3>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+		<div class="row">
+			<div class="col-md-2 pt-3">
+				<div class="row justify-content-center">
+					<div class="col-md-12">
+						<h5 class="pt-0 tickcheck1" style="color: #4c5b64;"><i class="fa fa-check-circle" style="font-size: 25px;"></i>  History page</h5>
+						<h5 class="px-2 pt-0 tickcheck1" style="color: #4c5b64;">|</h5>
+						<h5 class="px-2 pt-0 tickcheck1" style="color:  #4c5b64;">|</h5>
+					</div>
+					<div class="col-md-12">
+						<h5 class="pt-0 tickcheck2" style="color: #4c5b64;"><i class="fa fa-check-circle" style="font-size: 25px;"></i>  Examination Page</h5>
+						<h5 class="px-2 pt-0 tickcheck2" style="color: #4c5b64;">|</h5>
+						<h5 class="px-2 pt-0 tickcheck2" style="color: #4c5b64;">|</h5>
+					</div>
+					<div class="col-md-12 text-muted">
+						<h5 class="pt-0 tickcheck3" style="color:  #4c5b64;"><i class="fa fa-check-circle " style="font-size: 25px;"></i>  Laboratory Page</h5>
+						<h5 class="px-2 pt-0 tickcheck3" style="color: #4c5b64;">|</h5>
+						<h5 class="px-2 pt-0 tickcheck3" style="color: #4c5b64;">|</h5>
+					</div>
+					<div class="col-md-12 text-muted">
+						<h5 class="pt-0 tickcheck4" style="color: #4c5b64;"><i class="fa fa-check-circle " style="font-size: 25px;"></i>  Complain Page</h5>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-10" id="historyPage">
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Patient</b></label>
+								<select id="patientId" asp-items="@(new SelectList(ViewBag.Patient  ,"Id", "Name" ))" class="form-control"> </select>
+							</div>
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Case Number</b></label>
+								<input class="form-control" id="caseNumber" readonly>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Treatment History</b></label>
+								<textarea rows="4" class="form-control" id="treatmentHistoryId"></textarea>
+							</div>
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Vaccination History</b></label>
+								<textarea rows="4" class="form-control" id="vaccinationHistoryId"></textarea>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Environmental History</b></label>
+								<textarea rows="4" class="form-control" id="environmentalHistoryId"></textarea>
+							</div>
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Feeding History</b></label>
+								<textarea rows="4" class="form-control" id="feedingHistoryId"></textarea>
+							</div>
+						</div>
+						<div class="text-right">
+							<button type="submit" class="btn btn-primary" onclick="hideHistoryPage()">Next</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-10" id="examinationPage" style="display: none;">
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>General Examination</b></label>
+								<textarea rows="4" class="form-control" id="generalExaminationId"></textarea>
+							</div>
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Physical Examination</b></label>
+								<textarea rows="4" class="form-control" id="physicalExaminationId"></textarea>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Physiological Examination</b></label>
+								<textarea rows="4" class="form-control" id="physiologicalExaminationId"></textarea>
+							</div>
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Laboratory Examination</b></label>
+								<textarea rows="4" class="form-control" id="laboratoryExaminationId"></textarea>
+							</div>
+						</div>
+						<div class="row text-center">
+							<div class="col-6">
+								<button type="submit" class="btn btn-primary">Previous</button>
+							</div>
+							<div class="col-6">
+								<button type="submit" class="btn btn-primary" onclick="hideExaminationPage()">Next</button>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-md-10" id="laboratoryPage" style="display: none;">
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Laboratory Samples</b></label>
+								<textarea rows="4" class="form-control" id="laboratorySamplesId"></textarea>
+							</div>
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Laboratory Results</b></label>
+								<textarea rows="4" class="form-control" id="laboratoryResultsId"></textarea>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Differential Diagnosis</b></label>
+								<textarea rows="4" class="form-control" id="differentialDiagnosisId"></textarea>
+							</div>
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Definitive Diagnosis</b><span class="text-danger">*</span></label>
+								<textarea rows="4" class="form-control" id="definitiveDiagnosisId"></textarea>
+							</div>
+						</div>
+						<div class="row text-center">
+							<div class="col-6">
+								<button type="submit" class="btn btn-primary">Previous</button>
+							</div>
+							<div class="col-6">
+								<button type="submit" class="btn btn-primary" onclick="hideLaboratoryPage()">Next</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-10" id="primaryComplainPage" style="display: none;">
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Primary Complain</b><span class="text-danger">*</span></label>
+								<textarea rows="4" class="form-control" id="primaryComplainId"></textarea>
+							</div>
+							<div class="col-md-6 mb-4">
+								<label class="text-dark"><b>Purpose</b></label>
+								<textarea rows="4" class="form-control" id="purposeId"></textarea>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-4 mb-4">
+								<label class="text-dark"><b>Next Date Of Visit</b></label>
+								<input type="date" class="form-control" id="nextDateId">
+							</div>
+							<div class="col-md-4 mb-4">
+								<div class="form-group">
+									<h4>Send SMS</h4>
+									<div class="status-toggle">
+										<input type="checkbox" id="sendSMS" class="check">
+										<label for="sendSMS" class="checktoggle">checkbox</label>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4 mb-4">
+								<div class="form-group">
+									<div class="status-toggle">
+										<h4>Send Email</h4>
+										<input type="checkbox" id="sendEmail" class="check">
+										<label for="sendEmail" class="checktoggle">checkbox</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row text-center">
+							<div class="col-6">
+								<button type="submit" class="btn btn-primary">Previous</button>
+							</div>
+							<div class="col-6">
+								<button type="submit" class="btn btn-primary" onclick="addPatitientVisit()">Next</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Main Wrapper -->
+<script>
+	function ChangeColorToValid(selectedClass) {
+
+		for (var i = 0; i < selectedClass.length; i++) {
+			selectedClass[i].style.color = "#FF851A";
+		}
+	}
+	function ChangeColorToInValid(selectedClass) {
+
+		for (var i = 0; i < selectedClass.length; i++) {
+			selectedClass[i].style.color = "gray";
+		}
+	}
+	function hideHistoryPage() {
+		debugger;
+		var historyPage = document.getElementsByClassName("tickcheck1");;
+		var examinationPage = document.getElementsByClassName("tickcheck2");
+		var laboratoryPage = document.getElementsByClassName("tickcheck3");
+		var primaryComplainPage = document.getElementsByClassName("tickcheck4");
+		var treatmentHistoryId = $('#treatmentHistoryId').val();
+		var vaccinationHistoryId = $('#vaccinationHistoryId').val();
+		var environmentalHistoryId = $('#environmentalHistoryId').val();
+		var feedingHistoryId = $('#feedingHistoryId').val();
+		$('#historyPage').hide();
+		$('#examinationPage').show();
+		$('#laboratoryPage').hide();
+		$('#primaryComplainPage').hide();
+		if (treatmentHistoryId != "" && vaccinationHistoryId != "" && environmentalHistoryId != "" && feedingHistoryId != "") 
+		{
+
+			ChangeColorToValid(historyPage);
+			ChangeColorToInValid(examinationPage);
+			ChangeColorToInValid(laboratoryPage);
+			ChangeColorToInValid(primaryComplainPage);
+		}
+		else {
+			ChangeColorToInValid(historyPage);
+			ChangeColorToInValid(examinationPage);
+			ChangeColorToInValid(laboratoryPage);
+			ChangeColorToInValid(primaryComplainPage);
+		}
+	}
+	function hideExaminationPage() {
+		debugger;
+		var historyPage = document.getElementsByClassName("tickcheck1");;
+		var examinationPage = document.getElementsByClassName("tickcheck2");
+		var laboratoryPage = document.getElementsByClassName("tickcheck3");
+		var primaryComplainPage = document.getElementsByClassName("tickcheck4");
+		var generalExaminationId = $('#generalExaminationId').val();
+		var physicalExaminationId = $('#physicalExaminationId').val();
+		var physiologicalExaminationId = $('#physiologicalExaminationId').val();
+		var laboratoryExaminationId = $('#laboratoryExaminationId').val();
+		$('#historyPage').hide();
+		$('#examinationPage').hide();
+		$('#laboratoryPage').show();
+		$('#primaryComplainPage').hide();
+		if (generalExaminationId != "" && physicalExaminationId != "" && physiologicalExaminationId != "" && laboratoryExaminationId != "") {
+			ChangeColorToValid(historyPage);
+			ChangeColorToValid(examinationPage);
+			ChangeColorToInValid(laboratoryPage);
+			ChangeColorToInValid(primaryComplainPage);
+		}
+		else {
+			ChangeColorToInValid(historyPage);
+			ChangeColorToInValid(examinationPage);
+			ChangeColorToInValid(laboratoryPage);
+			ChangeColorToInValid(primaryComplainPage);
+		}
+	}
+	function hideLaboratoryPage() {
+		debugger;
+		var historyPage = document.getElementsByClassName("tickcheck1");;
+		var examinationPage = document.getElementsByClassName("tickcheck2");
+		var laboratoryPage = document.getElementsByClassName("tickcheck3");
+		var primaryComplainPage = document.getElementsByClassName("tickcheck4");
+		var laboratorySamplesId = $('#laboratorySamplesId').val();
+		var laboratoryResultsId = $('#laboratoryResultsId').val();
+		var differentialDiagnosisId = $('#differentialDiagnosisId').val();
+		var definitiveDiagnosisId = $('#definitiveDiagnosisId').val();
+		$('#historyPage').hide();
+		$('#examinationPage').hide();
+		$('#laboratoryPage').hide();
+		$('#primaryComplainPage').show();
+		if (laboratorySamplesId != "" && laboratoryResultsId != "" && definitiveDiagnosisId != "" && differentialDiagnosisId != "") {
+
+			ChangeColorToValid(historyPage);
+			ChangeColorToValid(examinationPage);
+			ChangeColorToValid(laboratoryPage);
+			ChangeColorToInValid(primaryComplainPage);
+		}
+		else {
+			ChangeColorToInValid(historyPage);
+			ChangeColorToInValid(examinationPage);
+			ChangeColorToInValid(laboratoryPage);
+			ChangeColorToInValid(primaryComplainPage);
+		}
+	}
+</script>

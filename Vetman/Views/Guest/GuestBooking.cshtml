@@ -1,0 +1,96 @@
+﻿
+@{
+	ViewData["Title"] = "Guest Booking";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+	<!-- Page Content -->
+	<div class="container pt-5">
+		<!-- New Client Tab -->
+		<div id="new_user_booking" class="pro-overview tab-pane fade show active">
+			<div class="card">
+				<div class="card-body">
+					<h3 class="card-title"> Basic Guest Information</h3>
+					<div class="row">
+
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="col-form-label">First Name <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" placeholder="N/A" id="Fname" required>
+							</div>
+						</div>
+
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="col-form-label">Last Name <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" placeholder="N/A" id="Lname" required>
+							</div>
+						</div>
+
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="col-form-label">Phone Number<span class="text-danger">*</span></label>
+								<input type="number" class="form-control" placeholder="N/A" id="phoneNumber" required>
+							</div>
+						</div>
+
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="col-form-label">Email <span class="text-info"> Optional</span></label>
+								<input type="email" class="form-control" placeholder="--Optional--" id="email">
+							</div>
+						</div>
+
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="col-form-label">Address <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" placeholder="N/A" id="address" required>
+							</div>
+						</div>
+					</div>
+
+					<hr>
+					<h3 class="card-title"> Booking Information</h3>
+					<div class="row">
+					<input hidden value="@ViewBag.CompanyBranchId" id="companyBranchId"/>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Booking Group <span class="text-danger">*</span></label>
+								<select id="bookingGroupId" asp-items="@(new SelectList(ViewBag?.BookingGroup  ,"Id", "Name" ))" class="form-control"> </select>
+							</div>
+						</div>
+
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Expected Price Per DOC</label>
+								<input type="text" class="form-control" placeholder="N/A" id="pricePerProduct" readonly>
+							</div>
+						</div>
+
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Quantity <span class="text-danger">*</span></label>
+								<input type="number" class="form-control" readonly placeholder="N/A" id="quantity" required>
+							</div>
+						</div>
+
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label text-success">Total Price </label>
+								<input type="number" class="form-control" readonly placeholder="N/A" id="totalPrice">
+							</div>
+						</div>
+					</div>
+
+					<div class="submit-section">
+					<button class="btn btn-primary submit-btn" onclick="guestBooking()" type="submit">Book</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /New Client Tab -->
+		
+	</div>
+	<!-- /Page Content -->
+

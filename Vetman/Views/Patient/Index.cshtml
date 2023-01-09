@@ -1,0 +1,238 @@
+﻿@model IEnumerable<Core.ViewModels.Treatments.PatientViewModel>
+@{
+	Layout = ViewBag.Layout;
+	var canAccess = Utitily.GetRoleScreen();
+	var roleAccess = Utitily.GetCurrentUser();
+}
+<style>
+	.text_large {
+		font-size: 100%;
+	}
+</style>
+
+
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Patient History</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active">Patient</li>
+					</ul>
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a asp-controller="Patient" asp-action="AddPatient" class="btn add-btn" ><i class="fa fa-plus"></i> Add Patient</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+
+
+
+
+		<div class="row">
+			<div class="col-md-12">
+
+				<div class="table-responsive">
+					<table class="table table-striped custom-table datatable">
+						<thead>
+							<tr>
+								<th> S/N </th>
+								<th>Patient Name</th>
+								<th>Customer Name</th>
+								<th>Specie</th>
+								<th>Gender</th>
+								<th>Breed</th>
+								<th>DOB</th>
+								<th>Unique Feature</th>
+								<th class="text-right">Action</th>
+							</tr>
+						</thead>
+						@if (Model.Count() > 0)
+						{
+							<tbody>
+								@foreach (var item in Model)
+								{
+									<tr>
+										<td></td>
+										<td>
+											<h2 class="table-avatar">
+												<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle img-fluid" src="@item.Picture" alt="Img"></a>
+												<a href="profile.html">@item.Name <span>@item.CaseNumber</span></a>
+											</h2>
+										</td>
+											<td>@item.Profession  @item.Customer</td>
+											<td>@item.SpecieId</td>
+											<td>@item.Gender</td>
+											<td>@item.Breed</td>
+											<td>@item.DOB.ToString("d")</td>
+											<td>@item.SpecialMarking</td>
+											<td class="text-right">
+												<div class="dropdown dropdown-action">
+													<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+													<div class="dropdown-menu dropdown-menu-right">
+													<a class="dropdown-item" data-toggle="modal" data-target="#profile_info" onclick="getCustomerPatientToEdit('@item.Id')"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+													<a class="dropdown-item" data-toggle="modal" data-target="#delete_termination" onclick="getCustomerPatientToEdit('@item.Id')"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+													</div>
+												</div>
+											</td>
+									</tr>
+								}
+							</tbody>
+						}
+					</table>
+				</div>
+
+			</div>
+		</div>
+		
+		<!-- Delete Patient Modal -->
+		<div class="modal custom-modal fade" id="delete_termination" role="dialog">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="form-header">
+							<h3>Delete Termination</h3>
+							<input class="form-control" type="text" id="delete_Id" hidden>
+							<p>Are you sure want to delete?</p>
+						</div>
+						<div class="modal-btn delete-action">
+							<div class="row">
+								<div class="col-6">
+									<a href="javascript:void(0);" class="btn btn-primary continue-btn" onclick="DeletePatient('DELETE', 'Id')">Delete</a>
+								</div>
+								<div class="col-6">
+									<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Delete Patient Modal -->
+	</div>
+	<!-- /Page Content -->
+
+
+
+
+
+
+
+
+	<!--Edit Patient Profile Modal -->
+	<div id="profile_info" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Profile Information</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="profile-img-wrap edit-img">
+									<img class="inline-block" src="assets/img/profiles/avatar-02.jpg" alt="user" id="editShowPix">
+									<div class="fileupload btn">
+										<span class="btn-text">edit</span>
+										<input class="upload" type="file" id="editImg">
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Patient Name</label>
+											<input type="text" class="form-control" id="nameEdit">
+										</div>
+									</div>
+								
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Birth Date</label>
+											<input class="form-control" type="date" id="dobEdit">
+										</div>
+									</div>
+									<input id="editPatientId" hidden/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							
+							
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Case Number</label>
+									<input type="text" class="form-control" readonly id="editCaseNo">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Patient Unique Features</label>
+									<input type="text" class="form-control" id="editUnique">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Patient Specie <span class="text-danger">*</span></label>
+									<div>
+										<select style="width:100%" id="editSpecies" class="select form-control filter" asp-items="@(new SelectList(ViewBag?.Species, "Id","Name"))">
+										</select>
+									</div>
+									
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									
+									<label>Patient Breed <span class="text-danger">*</span></label>
+									<div>
+										<select id="breedEdit" class="select form-control filter" style="width:100%"> </select>
+									</div>
+									
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Patient Gender <span class="text-danger">*</span></label>
+									<select id="genderEdit" class="select form-control " asp-items="@(new SelectList(ViewBag?.Gender, "Id", "Name"))"> </select>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Patient Colour</label>
+									<input type="text" class="form-control"  id="editColour">
+								</div>
+							</div>
+						</div>
+						<div class="submit-section">
+							<button class="btn btn-primary submit-btn" onclick="EditPatients('EDIT', 'Id')">Update</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Profile Modal -->

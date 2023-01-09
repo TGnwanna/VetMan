@@ -1,0 +1,121 @@
+﻿@model IEnumerable<Core.ViewModels.VisitViewModel>
+@{
+	ViewData["Title"] = "Patients Visit";
+	Layout = ViewBag.Layout;
+}
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Patients Visit</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+					</ul>
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a asp-action="Add" asp-controller="Visit" class="btn add-btn" ><i class="fa fa-plus"></i> Add History</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+
+		<!-- Search Filter -->
+		<div class="row filter-row">
+			<div class="col-sm-6 col-md-3">  
+				<div class="form-group form-focus">
+					<input type="text" class="form-control floating">
+					<label class="focus-label">Patients ID</label>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3">  
+				<div class="form-group form-focus">
+					<input type="text" class="form-control floating">
+					<label class="focus-label">Patients Name</label>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3"> 
+				<div class="form-group form-focus select-focus">
+					<select class="select floating"> 
+						<option>Select Designation</option>
+						<option>Web Developer</option>
+						<option>Web Designer</option>
+						<option>Android Developer</option>
+						<option>Ios Developer</option>
+					</select>
+					<label class="focus-label">Species</label>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3">  
+				<a href="#" class="btn btn-success btn-block"> Search </a>  
+			</div>     
+		</div>
+		<!-- /Search Filter -->
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table datatable">
+						<thead>
+							<tr>
+								<th>Patient Name</th>
+								<th>Created By</th>
+								<th>Definitive Diagnosis</th>
+								<th class="text-nowrap">Case Number</th>
+								<th class="text-right no-sort">Action</th>
+							</tr>
+						</thead>
+						@if (Model != null && Model.Count()> 0)
+						{
+							@foreach (var visit in Model)
+							{
+								<tbody>
+									<tr>
+										@if (visit.PatientPicture != null)
+										{
+											<td>
+												<h2 class="table-avatar">
+													<a href="profile.html" class="avatar"><img alt="" src="@visit.PatientPicture"></a>
+													<a href="profile.html">@visit.PatientName<span>@visit.Breed</span></a>
+												</h2>
+											</td>
+										}
+										else
+										{
+											<td>
+												<h2 class="table-avatar">
+													<a href="profile.html" class="avatar"><img alt="" src="~/light/assets/img/profiles/avatar-02.jpg"></a>
+													<a href="profile.html">@visit.PatientName<span>@visit.Breed</span></a>
+												</h2>
+											</td>
+										}
+										<td>@visit.CreatedName</td>
+										<td>@visit.DefinitiveDiagnosis</td>
+										<td>@visit.CaseNumber</td>
+										<td class="text-right">
+											<div class="dropdown dropdown-action">
+												<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+												<div class="dropdown-menu dropdown-menu-right">
+													<a class="dropdown-item" asp-action="PatientVisit" asp-controller="Visit" asp-route-id="@visit.Id"><i class="fa fa-pencil m-r-5"></i>View</a>
+													<a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_employee"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+												</div>
+											</div>
+										</td>
+									</tr>
+
+								</tbody>
+							}
+						}
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Content -->
+</div>
+<!-- /Page Wrapper -->

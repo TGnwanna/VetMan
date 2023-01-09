@@ -1,0 +1,209 @@
+﻿@model IEnumerable<Core.ViewModels.RoutineViewModel>
+@{
+	Layout = ViewBag.Layout;
+}
+
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+
+	.boardShape {
+		height: 600px;
+		overflow: scroll;
+	}
+
+</style>
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Routine</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active">Routine</li>
+					</ul>
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_termination"><i class="fa fa-plus"></i> Add Routine</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+		<!-- Search Filter -->
+		
+		<div class="row">
+			<div class="col-sm-12" id="dataBoard">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table mb-0 datatable" id="addTableBody">
+						<thead>
+							<tr>
+								<th>S/N</th>
+								@*<th>Name</th>*@
+								<th>Purpose</th>
+								<th>CurrentDate</th>
+								<th>NextDate</th>
+								<th class="text-right">Action</th>
+							</tr>
+						</thead>
+						@if (Model.Count() > 0 && Model != null)
+						{
+							<tbody>
+								@foreach (var routine in Model)
+								{
+									<tr>
+										<td></td>
+										@*<td>@routine.PatientId</td>*@
+										<td>@routine.Purpose</td>
+										<td>@routine.CurrentDate.ToString("d")</td>
+										<td>@routine.NextDate.ToString("d")</td>
+										<td class="text-right">
+											<div class="dropdown dropdown-action">
+												<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+												<div class="dropdown-menu dropdown-menu-right">
+													<a class="dropdown-item" data-toggle="modal" data-target="#edit_termination" onclick="GetRoutineByID('@routine.Id')"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+													<a class="dropdown-item" data-toggle="modal" data-target="#delete_termination" onclick="GetRoutineByID('@routine.Id')"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+												</div>
+											</div>
+										</td>
+									</tr>
+								}
+							</tbody>
+						}
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Content -->
+	<!-- Add Ticket Modal -->
+	<div id="add_termination" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Routine</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Purpose<span class="text-danger">*</span></label>
+								<input class="form-control" type="text" id="Purpose">
+								<p class="text-danger" id="NameVDT" hidden></p>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>CurrentDate<span class="text-danger">*</span></label>
+								<input class="form-control floating" type="date" id="CurrentDate">
+								<p class="text-danger" id="ExpectedDateOfArrivalVDT" hidden></p>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>NextDate<span class="text-danger">*</span></label>
+								<input class="form-control floating" type="date" id="NextDate">
+								<p class="text-danger" id="ExpectedDateOfArrivalVDT" hidden></p>
+							</div>
+						</div>
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="CreateRoutine()">Submit</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Add Ticket Modal -->
+	<!-- Edit Termination Modal -->
+	<div id="edit_termination" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Routine</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<label>Purpose<span class="text-danger">*</span></label>
+							<input class="form-control" type="text" id="edit_Id" hidden>
+							<input class="form-control" type="text" id="edit_Purpose">
+							<p class="text-danger" id="edit_NameVDT" hidden></p>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>CurrentDate<span class="text-danger">*</span></label>
+								<input class="form-control floating" type="date" id="edit_CurrentDate">
+								<p class="text-danger" id="ExpectedDateOfArrivalVDT" hidden></p>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>NextDate<span class="text-danger">*</span></label>
+								<input class="form-control floating" type="date" id="edit_NextDate">
+								<p class="text-danger" id="ExpectedDateOfArrivalVDT" hidden></p>
+							</div>
+						</div>
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="EditRoutine('EDIT', 'Id')">Update</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Edit Termination Modal -->
+
+	<!-- Delete Termination Modal -->
+	<div class="modal custom-modal fade" id="delete_termination" role="dialog">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="form-header">
+						<h3>Delete Termination</h3>
+						<input class="form-control" type="text" id="delete_Id" hidden>
+						<p>Are you sure want to delete?</p>
+					</div>
+					<div class="modal-btn delete-action">
+						<div class="row">
+							<div class="col-6">
+								<a href="javascript:void(0);" class="btn btn-primary continue-btn" onclick="DeleteRoutine('DELETE', 'Id')">Delete</a>
+							</div>
+							<div class="col-6">
+								<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Delete Termination Modal -->
+</div>
+<!-- /Page Wrapper -->

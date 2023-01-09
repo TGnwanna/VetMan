@@ -1,0 +1,241 @@
+﻿@model IEnumerable<Core.ViewModels.ApplicationUserViewModel>
+
+@{
+	ViewData["Title"] = "List of Staff";
+	Layout = ViewBag.Layout;
+
+}
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+<!-- Main Wrapper -->
+<div class="page-wrapper">
+
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Staff</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active">Staff</li>
+					</ul>
+				</div>
+				<div class="col-auto">
+					<a href="#" class="btn add-btn" id="link"><i class="fa fa-plus"></i>Get Company Link</a>
+					<input type="text" id="hidelink" name="name" hidden />
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_staff"><i class="fa fa-plus"></i> Add Staff</a>
+					<div class="view-icons">
+						<a href="product.html" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
+						<a href="product.html" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+		<!-- Search Filter -->
+		<div class="row filter-row">
+			<div class="col-sm-6 col-md-3">
+				<div class="form-group form-focus">
+					<input type="text" class="form-control floating">
+					<label class="focus-label">Staff ID</label>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<div class="form-group form-focus">
+					<input type="text" class="form-control floating">
+					<label class="focus-label">Staff Name</label>
+				</div>
+			</div>
+
+			<div class="col-sm-6 col-md-3">
+				<a href="#" class="btn btn-success btn-block"> Search </a>
+			</div>
+		</div>
+		<!-- /Search Filter -->
+
+		<div class="row">
+
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table datatable">
+						<thead>
+							<tr>
+								<th>S/N</th>
+								<th>FirstName</th>
+								<th>LastName</th>
+								<th>CompanyBranch</th>
+								<th>Email</th>
+								<th class="text-right no-sort">Action</th>
+							</tr>
+						</thead>
+						@if (Model.Count() > 0 && Model != null)
+						{
+							<tbody>
+								@foreach (var applicationUser in Model)
+								{
+									<tr>
+										<td></td>
+										<td>@applicationUser.FirstName</td>
+										<td>@applicationUser.LastName</td>
+										<td>@applicationUser.CompanyBranch</td>
+										<td>@applicationUser.Email</td>
+										<td class="text-right">
+											<div class="dropdown dropdown-action">
+												<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+												<div class="dropdown-menu dropdown-menu-right">
+													<a class="dropdown-item" data-toggle="modal" data-target="#edit_staff" onclick="EditedStaff('@applicationUser.Id')"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+													<a class="dropdown-item" data-toggle="modal" data-target="#delete_staff" onclick="EditedStaff('@applicationUser.Id')"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+												</div>
+											</div>
+										</td>
+									</tr>
+								}
+							</tbody>
+						}
+						else
+						{
+							<div class="col-md-12">
+								<h2 class="text-center">No Record Found</h2>
+							</div>
+						}
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Content -->
+	<!-- Add Product Type Modal -->
+	<div id="add_staff" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Staff</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<label>FirstName <span class="text-danger">*</span></label>
+							<input class="form-control" id="staff_first_Name" required type="text">
+						</div>
+						<div class="col-sm-6">
+							<label>LastName <span class="text-danger">*</span></label>
+							<input class="form-control" id="staff_Last_Name" required type="text">
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-sm-6">
+							<label>Email <span class="text-danger">*</span></label>
+							<input class="form-control" id="staff_Email" required type="text">
+						</div>
+						<div class="col-sm-6">
+							<label>Password <span class="text-danger">*</span></label>
+							<input class="form-control" id="staff_Password" required type="password">
+						</div>
+
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<label>Confirm Password <span class="text-danger">*</span></label>
+							<input class="form-control" id="staff_Confirm_Password" required type="password">
+						</div>
+						<div class="col-sm-6">
+							<label class="col-form-label">Company Branch <span class="text-danger">*</span></label>
+							<select id="companyBranchIdStaff" asp-items="@(new SelectList(ViewBag.CompanyBranches ,"Id", "Name" ))" class="form-control"> </select>
+						</div>
+					</div>
+					<div class="col-sm-6" style="margin-left:20%">
+						<div class="submit-section">
+							<button class="btn btn-primary submit-btn" onclick="addStaff()">Register </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Add Product type Modal -->
+	<!-- Edit Product type Modal -->
+	<div id="edit_staff" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Staff</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<label>FirstName <span class="text-danger">*</span></label>
+							<input class="form-control" id="staff_edited_first_name" required type="text">
+							<input class="form-control" hidden id="staff_editId" required type="text">
+						</div>
+						<div class="col-sm-6">
+							<label>LastName <span class="text-danger">*</span></label>
+							<input class="form-control" id="staff_edited_last_name" required type="text">
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-sm-6">
+							<label>Email <span class="text-danger">*</span></label>
+							<input class="form-control" readonly id="staff_edited_email" required type="text">
+						</div>
+						<div class="col-sm-6">
+							<label class="col-form-label">Company Branch <span class="text-danger">*</span></label>
+							<select id="edit_companyBranchId" asp-items="@(new SelectList(ViewBag?.CompanyBranches ,"Id", "Name" ))" class="form-control"> </select>
+						</div>
+					</div>
+					<div class="col-sm-6" style="margin-left:20%">
+						<div class="submit-section">
+							<button class="btn btn-primary submit-btn" onclick="SaveEditStaff()">Submit </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Edit Product type Modal -->
+	<!-- Delete Product type Modal -->
+	<div class="modal custom-modal fade" id="delete_staff" role="dialog">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="form-header">
+						<h3>Delete Staff</h3>
+						<input class="form-control" type="text" hidden id="staff_deleteId">
+						<p>Are you sure want to delete?</p>
+					</div>
+					<div class="modal-btn delete-action">
+						<div class="row">
+							<div class="col-6">
+								<a class="btn btn-primary continue-btn" onclick="DeleteStaff()">Delete</a>
+							</div>
+							<div class="col-6">
+								<a data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Delete Product type Modal -->
+</div>

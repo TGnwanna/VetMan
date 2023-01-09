@@ -1,0 +1,131 @@
+﻿﻿@{
+	ViewData["Title"] = "Add Patients Treatment'(s)";
+	Layout = ViewBag.Layout;
+}
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+	<div class="chat-main-row">
+		<div class="chat-main-wrapper">
+			<div class="col-md-10 message-view task-view task-left-sidebar">
+				<div class="chat-window">
+					<div class="task-wrapper justify-content-center">
+						<div class="navbar">
+							<div class="float-left mr-auto">
+								<div class="add-task-btn-wrapper">
+									<span class="add-task-btn btn btn-white btn-md">
+										Add History 
+									</span>
+								</div>
+							</div>
+							<div class="float-right ml-auto">
+								<div class="add-task-btn-wrapper">
+									<span id="saveTreatment" class="btn btn-white btn-lg">
+										Save
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="chat-contents">
+						<div class="chat-content-wrap">
+							<div class="chat-wrap-inner">
+								<div class="chat-box">
+									<div class="task-wrapper">
+										<div class="task-list-container">
+											<div class="task-list-body">
+												<ul id="task-list">
+													<li class="task">
+														<div class="task-container">
+															<div class="col-sm-4 mt-3 float-right">
+																<h3>Grand Total: &#x20A6; <span id="totalAmountToPay"></span></h3>
+															</div>
+														</div>
+													</li>
+												</ul>
+											</div>
+											<div class="task-list-body">
+												<ul class="list-unstyled">
+													<li class="task list-style-type-none">
+														<table class="table table-striped custom-table mb-0 table-bordered task-container">
+															<thead>
+																<tr>
+																	<th>S/N</th>
+																	<th>Treament</th>
+																	<th>Cost</th>
+																	<th>Discount</th>
+																	<th>Total</th>
+																	<th></th>
+																</tr>
+															</thead>
+															<tbody id="addItem">
+															</tbody>
+														</table>
+													</li>
+												</ul>
+											</div>
+											<div class="task-list-footer">
+												<div class="new-task-wrapper">
+													<div class="task-list-body pb-2">
+														<ul id="task-list">
+															<li class="task" id="new-task">
+																<div class="task-container">
+																	<div class="row">
+																		<div class="col-md-3">
+																			<div class="form-group">
+																				<label class="col-form-label">Treament</label>
+																				<select id="treamentId" asp-items="@(new SelectList(ViewBag.Treatment  ,"Id", "Name" ))" class="form-control"> </select>
+																			</div>
+																		</div>
+																		<div class="col-md-3">
+																			<div class="form-group">
+																				<label class="col-form-label">Cost</label>
+																				<input type="text" class="form-control" placeholder="N/A" id="costId" readonly>
+																			</div>
+																		</div>
+																		<div class="col-md-3">
+																			<div class="form-group">
+																				<label class="col-form-label">Discount</label>
+																				<input type="number" class="form-control" placeholder="N/A" id="discountId">
+																			</div>
+																		</div>
+																		<input type="text" class="form-control" placeholder="N/A" id="treatmentName" hidden>
+																		<input type="text" class="form-control" placeholder="N/A" value="@ViewBag.VisitId" id="visitId" hidden>
+																	</div>
+																</div>
+															</li>
+														</ul>
+													</div>
+													<span class="error-message" hidden>You need to enter a treatment(s) first</span>
+													<span class="add-new-task-btn btn" onclick="append()">Add Treatment</span>
+													<span class="btn" id="close-task-panel">Close</span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="notification-popup hide">
+										<p>
+											<span class="task"></span>
+											<span class="notification-text"></span>
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Page Wrapper -->

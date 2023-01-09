@@ -1,0 +1,112 @@
+﻿@model Core.ViewModels.CompanySettingViewModel
+@{
+    ViewData["Title"] = "Company Settings";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Company Settings</h3>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <h6 class="card-title m-b-20">Vet Module</h6>
+                <div class="m-b-30">
+                    <ul class=" notification-list bg-white p-3 row @*justify-content-center*@ ">
+                        <li class="p-3 col-sm-6 col-md-2 col-lg-3 col-xl-3 col-6 ">
+                            @{
+                                var DOCBookingModule = "";
+                            }
+                            @if (Model.DOCBookingModule)
+                                DOCBookingModule = "checked";
+                            @Html.HiddenFor(Model => Model.CompanyId, new { Id = "companyId" })
+                            <h4 class="col-12 pl-0">@Html.DisplayNameFor(Model => Model.DOCBookingModule) </h4>
+                            <div class="onoffswitch ml-0">
+
+                                <input type="checkbox" name="DOCBookingModule" class="feature onoffswitch-checkbox" id="DOCBookingModule" @DOCBookingModule>
+                                <label class="onoffswitch-label" for="DOCBookingModule">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </li>
+
+                        <li class="p-3 col-sm-6 col-md-2 col-lg-3 col-xl-3 col-6 ">
+                            @{
+                                var vaccineModule = "";
+                            }
+                            @if (Model.VaccineModule)
+                                vaccineModule = "checked";
+                            <h4 class="col-12 pl-0">@Html.DisplayNameFor(Model => Model.VaccineModule) </h4>
+                            <div class="onoffswitch ml-0">
+
+                                <input type="checkbox" name="vaccineModule" class="feature onoffswitch-checkbox" id="vaccineModule" @vaccineModule>
+                                <label class="onoffswitch-label" for="vaccineModule">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </li>
+
+                         <li class="p-3 col-sm-6 col-md-2 col-lg-3 col-xl-3 col-6 ">
+                            @{
+                                var transactionModule = "";
+                            }
+                            @if (Model.TransactionModule)
+                                transactionModule = "checked";
+                            @Html.HiddenFor(Model => Model.CompanyId, new { Id = "companyId" })
+                            <h4 class="col-12 pl-0">@Html.DisplayNameFor(Model => Model.TransactionModule) </h4>
+                            <div class="onoffswitch ml-0">
+
+                                <input type="checkbox" name="transactionModule" class="feature onoffswitch-checkbox" id="transactionModule" @transactionModule>
+                                <label class="onoffswitch-label" for="transactionModule">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </li>
+
+                        <li class="p-3 col-sm-6 col-md-2 col-lg-3 col-xl-3 col-6 ">
+                            @{
+                                var storeModule = "";
+                            }
+                            @if (Model.StoreModule)
+                                storeModule = "checked";
+                            @Html.HiddenFor(Model => Model.CompanyId, new { Id = "companyId" })
+                            <h4 class="col-12 pl-0">@Html.DisplayNameFor(Model => Model.StoreModule) </h4>
+                            <div class="onoffswitch ml-0">
+
+                                <input type="checkbox" name="storeModule" class="feature onoffswitch-checkbox" id="storeModule" @storeModule>
+                                <label class="onoffswitch-label" for="storeModule">                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="staff-msg">
+                    <a class="btn btn-custom px-3" href="#" onclick="SaveData()"> Save</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+</div>
+<!-- /Page Wrapper -->
+<style>
+    .notification-list .status-toggle {
+        float: none !important;
+    }
+
+</style>

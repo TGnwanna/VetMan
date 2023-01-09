@@ -1,0 +1,184 @@
+﻿@model IEnumerable<Core.ViewModels.SaleLogsViewModel>
+@{
+	Layout = ViewBag.Layout;
+}
+
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Item Purchased</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active">Item</li>
+					</ul>
+				</div>
+				
+			</div>
+		</div>
+		<!-- /Page Header -->
+
+		<!-- Search Filter -->
+		<div class="row filter-row">
+			<div class="col-sm-6 col-md-3"> 
+				<div class="form-group form-focus select-focus">
+					<select id="customerId" asp-items="@(new SelectList(ViewBag?.Customer  ,"CustomerId", "CustomerName" ))" class="form-control"> </select>
+					<label class="focus-label">Customer</label>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<div class="form-group form-focus">
+					<div class="cal-icon">
+						<input class="form-control floating datetimepicker" id="dateFrom" type="text">
+					</div>
+					<label class="focus-label">From</label>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<div class="form-group form-focus">
+					<div class="cal-icon">
+						<input class="form-control floating datetimepicker" id="dateTo" type="text">
+					</div>
+					<label class="focus-label">To</label>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3 col-lg-3">
+				<a href="#" class="btn btn-success btn-block" onclick="GetItemDetails()"> Search </a>
+			</div>
+			
+        </div>
+		<!-- Search Filter -->
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table mb-0 datatable">
+						<thead id="headColumn">
+							<tr>
+								<th>S/N</th>
+								<th>Customer</th>
+								<th>Staff</th>
+								<th>Order Date</th>
+								<th>Total Amount</th>
+								<th class="text-left no-sort">Action</th>
+							</tr>
+						</thead>
+						@if (Model.Count() > 0 && Model != null)
+						{
+							<tbody>
+								@foreach (var SalesLog in Model)
+								{
+									<tr>
+										<td></td>
+										<td>@SalesLog.Customer</td>
+										<td>@SalesLog.Staff</td>
+										<td>@SalesLog.DateCreated.ToLongDateString()</td>
+										<td>@SalesLog.TotalAmountPaid</td>
+										<td>
+											<a href="#" class="text-center no-sort" data-toggle="modal" data-target="#add_subscriber" data-backdrop="static" onclick="viewDetailModal('@SalesLog.Id')" title="View Details">
+												<i class="fa fa-eye" aria-hidden="true"></i>
+											</a>
+										</td>
+										
+										
+									</tr>
+								}
+							</tbody>
+						}
+					</table>	
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Content -->
+	
+		<!-- Add Subscriber Modal -->
+		<div id="add_subscriber" class="modal custom-modal fade" role="dialog">
+			<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">ORDER DETAIL</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body" >
+						<div class="row">
+							<div class="col-md-6">
+								<ul class="personal-info">
+									<li>
+										<div class="title">Customer:</div>
+										<div class="text"><a href="#" id="customerName"></a></div>
+									</li>
+									<li>
+									<div class="title"> Phone:</div>
+										<div class="text"><a href="#" id="customerPhone"></a></div>
+									</li>
+									<li>
+										<div class="title">Total:</div>
+										<div class="text"><a id="totalPaidByCustomer"></a></div>
+									</li>
+									
+									
+								</ul>
+							</div>
+							<div class="col-md-6">
+								<ul class="personal-info">
+								
+									<li>
+										<div class="title">Staff:</div>
+										<div class="text" id="salesStaff"></div>
+									</li>
+									<li>
+										<div class="title">Address:</div>
+										<div class="text" id="customerAddress"></div>
+									</li>
+									
+									
+								</ul>
+							</div>
+							<div class="table-responsive">
+								
+								<table class="table table-nowrap">
+									<thead>
+										<tr>
+											<th>Product</th>
+											<th>Discount</th>
+											<th>Unit Price</th>
+											<th>Quantity</th>
+											<th>Supplier</th>
+											<th>Measurement Unit</th>
+										</tr>
+									</thead>
+									<tbody id="shoppedItems">
+										
+									</tbody>
+								</table>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Add Subscriber Modal -->
+	
+</div>
+<!-- /Page Wrapper -->

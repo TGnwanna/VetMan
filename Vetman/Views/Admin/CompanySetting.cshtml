@@ -1,0 +1,67 @@
+﻿@model Core.ViewModels.StaffViewModel 
+@{
+    ViewData["Title"] = "Role Settings";
+    Layout = ViewBag.Layout;
+}
+
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Company Settings</h3>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+        @Html.HiddenFor(x => x.BranchId, new{ id  = "branchId"})
+        @Html.HiddenFor(x => x.Id, new{ id  = "roleId"})
+        @if (Model.RoleAccess.Count > 0)
+        {
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <h6 class="card-title m-b-20">@Model.RoleName</h6>
+                    <div class="m-b-30 ">
+                        <ul class=" notification-list bg-white p-3 row @*justify-content-center*@ ">
+                            @foreach (var item in Model.RoleAccess)
+                            {
+                                <li class="p-3 col-sm-6 col-md-2 col-lg-2 col-xl-2 col-2  ">
+                                    @{
+                                        var showVetManModule = "";
+                                    }
+                                    @if (item.Ischecked)
+                                        showVetManModule = "checked";
+                                    <h4 class="col-12 pl-0">@item.Name </h4>
+                                    <div class="onoffswitch ml-0">
+
+                                        <input type="checkbox" name="@item.Name" class="access onoffswitch-checkbox" id="@item.Name" @showVetManModule>
+                                        <label class="onoffswitch-label" for="@item.Name">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            }
+                        
+                        </ul>
+                    </div>
+                    <div class="staff-msg">
+                        <a class="btn btn-custom px-3" href="#" onclick="SaveAccess()"> Save Settings</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <!-- /Page Content -->
+</div>
+<!-- /Page Wrapper -->
+<style>
+    .notification-list .status-toggle {
+        float: none !important;
+    }
+
+</style>

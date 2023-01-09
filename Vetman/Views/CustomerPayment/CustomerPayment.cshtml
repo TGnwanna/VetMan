@@ -1,0 +1,93 @@
+﻿@model Core.ViewModels.CustomerPaymentGeneralViewModel
+@{
+    ViewData["Title"] = "Customer Payment";
+	Layout = ViewBag.Layout;
+}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Payment History For @Model.CustomerFullName</h3>
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_employee"><i class="fa fa-plus"></i>Add Payment</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+		<div class="row">
+			<div class="col-sm-12 col-md-10 m-md-auto">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table datatable">
+						<thead>
+							<tr>
+								<th>Date Paid</th>
+								<th>Amount</th>
+								<th>Updated By</th>
+							</tr>
+						</thead>
+						@if (Model.CustomerBookingPaymentViewModel.Count > 0)
+						{
+							<tbody>
+								@foreach (var customerPayment in Model.CustomerBookingPaymentViewModel)
+								{
+								
+										<tr>
+											<td>@customerPayment.DatePaid</td>
+											<td>@customerPayment.Amount</td>
+											<td>@customerPayment.UpdatedByUserName</td>
+										</tr>
+
+								
+								}
+							</tbody>
+						}
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Content -->
+	<!-- Add Payment Modal -->
+	<div id="add_employee" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Update Price</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input class="form-control" hidden id="updatedByUserId" value="@Model.UpdatedByUserId" readonly type="text">
+					<input class="form-control" hidden id="customerBookingId" value="@Model.CustomerBookingId" readonly type="text">
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label class="col-form-label">Amount<span class="text-danger">*</span></label>
+							<input class="form-control" id="amount" type="text">
+						</div>
+					</div>
+
+					<div class="col-sm-12">
+						<div class="form-group">
+							<label class="col-form-label">Date<span class="text-danger">*</span></label>
+							<input class="form-control" id="date" type="date">
+						</div>
+					</div>
+					<div class="submit-section">
+						<button class="btn btn-primary submit-btn" onclick="addPayment()">Submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Update Price Modal -->
+</div>
+<!-- /Page Wrapper -->

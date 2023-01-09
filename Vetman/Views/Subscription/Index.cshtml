@@ -1,0 +1,249 @@
+﻿@{
+	Layout = ViewBag.Layout;
+}
+@model Core.ViewModels.ModulesData
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+	<!-- Page Content -->
+	<div class="content container-fluid">
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Subscription</h3>
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+						<li class="breadcrumb-item active">Subscription</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card mb-0">
+					<div class="card-body">
+						<div class="email-header">
+							<div class="row">
+								<div class="col top-action-left">
+									<div class="float-left">
+										@*<div class="btn-group dropdown-action">
+											<button type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown">Select <i class="fa fa-angle-down "></i></button>
+											<div class="dropdown-menu">
+												<a class="dropdown-item" href="#">All</a>
+												<a class="dropdown-item" href="#">None</a>
+												<div class="dropdown-divider"></div>
+												<a class="dropdown-item" href="#">Read</a>
+												<a class="dropdown-item" href="#">Unread</a>
+											</div>
+										</div>*@
+										@*<div class="btn-group dropdown-action">
+											<button type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown">Actions <i class="fa fa-angle-down "></i></button>
+											<div class="dropdown-menu">
+												<a class="dropdown-item" href="#">Reply</a>
+												<a class="dropdown-item" href="#">Forward</a>
+												<a class="dropdown-item" href="#">Archive</a>
+												<div class="dropdown-divider"></div>
+												<a class="dropdown-item" href="#">Mark As Read</a>
+												<a class="dropdown-item" href="#">Mark As Unread</a>
+												<div class="dropdown-divider"></div>
+												<a class="dropdown-item" href="#">Delete</a>
+											</div>
+										</div>
+										<div class="btn-group dropdown-action">
+											<button type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown"><i class="fa fa-folder"></i> <i class="fa fa-angle-down"></i></button>
+											<div role="menu" class="dropdown-menu">
+												<a class="dropdown-item" href="#">Social</a>
+												<a class="dropdown-item" href="#">Forums</a>
+												<a class="dropdown-item" href="#">Updates</a>
+												<div class="dropdown-divider"></div>
+												<a class="dropdown-item" href="#">Spam</a>
+												<a class="dropdown-item" href="#">Trash</a>
+												<div class="dropdown-divider"></div>
+												<a class="dropdown-item" href="#">New</a>
+											</div>
+										</div>
+										<div class="btn-group dropdown-action">
+											<button type="button" data-toggle="dropdown" class="btn btn-white dropdown-toggle"><i class="fa fa-tags"></i> <i class="fa fa-angle-down"></i></button>
+											<div role="menu" class="dropdown-menu">
+												<a class="dropdown-item" href="#">Work</a>
+												<a class="dropdown-item" href="#">Family</a>
+												<a class="dropdown-item" href="#">Social</a>
+												<div class="dropdown-divider"></div>
+												<a class="dropdown-item" href="#">Primary</a>
+												<a class="dropdown-item" href="#">Promotions</a>
+												<a class="dropdown-item" href="#">Forums</a>
+											</div>
+										</div>*@
+									</div>
+									@*<div class="float-left d-none d-sm-block">
+										<input type="text" placeholder="Search Messages" class="form-control search-message">
+									</div>*@
+								</div>
+								<div class="col-auto top-action-right mb-3">
+								
+									<div class="text-right">
+										<button type="button" title="Subscribe for package" data-toggle="tooltip" onclick="subscriber()" class="btn btn-white d-none d-md-inline-block px-3"><i>Subscribe</i></button>
+										@*<button type="button" title="Refresh" data-toggle="tooltip" class="btn btn-white d-none d-md-inline-block"><i class="fa fa-refresh"></i></button>
+										<div class="btn-group">
+											<a class="btn btn-white"><i class="fa fa-angle-left"></i></a>
+											<a class="btn btn-white"><i class="fa fa-angle-right"></i></a>
+										</div>*@
+									</div>
+									
+									@*<div class="text-right">
+										<span class="text-muted d-none d-md-inline-block">Showing 10 of 112 </span>
+									</div>*@
+								</div>
+							</div>
+						</div>
+						<div class="email-content">
+							@if (Model.ModuleCost.Count() > 0)
+							{					
+								<div class="table-responsive">
+								<table class="table table-inbox table-hover">
+									<thead>
+										<tr>
+											<th >
+												<input type="checkbox" class="checkbox-all">
+											</th>
+											<th></th>
+											<th class="h3">Module Name</th>
+											<th class="h3"><b>Description</b></th>
+											<th class="h3"><b>Cost</b></th>
+											<th class="h3"><b>Duration</b></th>
+										</tr>
+									</thead>
+									<tbody id="modules">
+										@foreach (var item in Model.ModuleCost)
+										{
+											if (item.NoOfDays > 200)
+											{
+												@if (item.Active)
+												{
+													<tr class="unread clickable-row" data-href="#">
+														<td>
+															<input data-id="@item.Id" checked type="checkbox" class="checkmail">
+														</td>
+														<td><span class="mail-important"><i class="fa fa-star starred"></i></span></td>
+														<td >@item.ModuleId</td>
+														<td >@item.Discription</td>
+														<td id="showPrice">&#x20A6; @item.Price</td>
+														<td>@item.NoOfDays</td>
+													</tr>
+												}
+												else{
+
+													<tr class="unread clickable-row" data-href="#">
+														<td>
+															<input data-id="@item.Id"  type="checkbox" class="checkmail">
+														</td>
+														<td><span class="mail-important"><i class="fa fa-star starred"></i></span></td>
+														<td class="">@item.ModuleId</td>
+														<td class="">@item.Discription</td>
+														<td id="showPrice">&#x20A6; @item.Price</td>
+														<td class="">@item.NoOfDays</td>
+													</tr>
+												}
+												
+											}
+											else{
+												@if (item.Active)
+												{
+													<tr class="unread clickable-row" data-href="#">
+														<td>
+															<input data-id="@item.Id" type="checkbox" checked class="checkmail">
+														</td>
+														<td><span class="mail-important"><i class="fa fa-star-o"></i></span></td>
+														<td class="">@item.ModuleId</td>
+														<td class="">@item.Discription</td>
+														<td id="showPrice">&#x20A6; @item.Price</td>
+														<td class="">@item.NoOfDays</td>
+													</tr>
+												}else{
+													<tr class="unread clickable-row" data-href="#">
+														<td>
+															<input data-id="@item.Id" type="checkbox" class="checkmail">
+														</td>
+														<td><span class="mail-important"><i class="fa fa-star-o"></i></span></td>
+														<td class="">@item.ModuleId</td>
+														<td class="">@item.Discription</td>
+														<td id="showPrice">&#x20A6; @item.Price</td>
+														<td class="">@item.NoOfDays</td>
+													</tr>
+												}
+												
+											}
+										}
+									</tbody>
+								</table>
+							</div>
+							}
+						</div>
+					</div>
+				</div>
+
+				<div class="row mt-5">
+						<div class="col-lg-10 mx-auto">
+							@if (Model.Plans.Count() > 0)
+						{
+							<!-- Plan Details -->
+							<div class="row">
+								<div class="col-md-12">
+									<div class="card card-table mb-0">
+										<div class="card-header">
+											<h4 class="card-title mb-0">Plan Transactions</h4>
+										</div>
+										<div class="card-body">
+											<div class="table-responsive">
+												<table class="table table-hover table-center mb-0">
+													<thead>
+														<tr>
+															<th>Plan</th>
+															<th>Plan Duration</th>
+															<th>Start Date</th>
+															<th>End Date</th>
+															<th>Amount</th>
+															<th>Activity</th>
+															@*<th>Update Plan</th>*@
+														</tr>
+													</thead>
+													<tbody>
+														@foreach (var item in Model.Plans)
+														{
+															<tr>
+																<td>@item.Name</td>
+																<td>@item.Duration</td>
+																<td>@item.StartDate.ToString("D")</td>
+																<td>@item.ExpiryDate.ToString("D")</td>
+																<td>@item.Cost</td>
+																<td><span class="badge bg-inverse-success">@item.Active</span></td>
+																@*<td><a class="btn btn-primary btn-sm" href="javascript:void(0);">Change Plan</a></td>*@
+															</tr>
+														}
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+						<!-- /Plan Details -->
+						</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- /Page Content -->
+
+</div>
+<!-- /Page Wrapper -->
+
+<script>
+	
+</script>
