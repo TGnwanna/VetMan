@@ -209,15 +209,15 @@ function getCustomerPatientToEdit(id) {
                 $("#editShowPix").attr("src", result.data.patient.picture);
                 $("#editColour").val(result.data.patient.colour);
                 $("#genderEdit").val(result.data.patient.genderId);
-                $("#editSpecies").val(result.data.patient.speciesId);
+                $("#edit_petSpec").val(result.data.patient.speciesId);
                
                 $("#editUnique").val(result.data.patient.specialMarking);
                 $("#editCaseNo").val(result.data.patient.caseNumber);
-                $("#breedEdit").empty();
+                $("#breed_Edit").empty();
                 $.each(result.data.breed, function (i, bred) {  
-                    $("#breedEdit").append('<option value=' + bred.id + '>' + bred.name + '</option>');
+                    $("#breed_Edit").append('<option value=' + bred.id + '>' + bred.name + '</option>');
                 });
-                $("#breedEdit").val(result.data.patient.breedId)
+                $("#breed_Edit").val(result.data.patient.breedId)
             }
             else
                 errorAlert(result.msg);
@@ -235,9 +235,9 @@ function EditPatients() {
     var data = {};
     data.Id = $('#editPatientId').val();
     data.Name = $('#nameEdit').val();
-    data.SpecieId = $('#editSpecies').val();
-    data.GenderId = $('#editSpecies').val();
-    data.BreedId = $('#breedEdit').val();
+    data.SpecieId = $('#edit_petSpec').val();
+    data.GenderId = $('#genderEdit').val();
+    data.BreedId = $('#breed_Edit').val();
     data.BirthDay = $('#dobEdit').val();
     data.Colour = $('#editColour').val();
     data.SpecialMarking = $('#editUnique').val();
@@ -312,6 +312,39 @@ function DeletePatient() {
     }
 
 }
+
+
+
+$("#edit_petSpec").change(function () {
+    debugger;
+    var id = $(this).val();
+    if (id != "") {
+        $("#breed_Edit").empty();
+        $.ajax({
+            type: 'GET',
+            url: '/Patient/GetBreed',
+            data: { id: id },
+            success: function (result) {
+                debugger;
+
+                if (!result.isError) {
+                    $.each(result.data, function (i, mean) {
+                        debugger;
+                        $("#breed_Edit").append('<option value=' + mean.id + '>' + mean.name + '</option>');
+                    });
+                }
+                else {
+
+                    newErrorAlert(result.msg);
+                }
+            },
+            Error: function (ex) {
+
+                errorAlert(ex);
+            }
+        });
+    }
+});
 
 
 

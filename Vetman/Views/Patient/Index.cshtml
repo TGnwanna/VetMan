@@ -198,7 +198,7 @@
 								<div class="form-group">
 									<label>Patient Specie <span class="text-danger">*</span></label>
 									<div>
-										<select style="width:100%" id="editSpecies" class="select form-control filter" asp-items="@(new SelectList(ViewBag?.Species, "Id","Name"))">
+										<select style="width:100%" id="edit_petSpec" class="select form-control filter" asp-items="@(new SelectList(ViewBag?.Species, "Id","Name"))">
 										</select>
 									</div>
 									
@@ -209,7 +209,7 @@
 									
 									<label>Patient Breed <span class="text-danger">*</span></label>
 									<div>
-										<select id="breedEdit" class="select form-control filter" style="width:100%"> </select>
+										<select id="breed_Edit" class="select form-control filter" style="width:100%"> </select>
 									</div>
 									
 								</div>
